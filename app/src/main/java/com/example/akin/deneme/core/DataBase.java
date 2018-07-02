@@ -1,15 +1,17 @@
 package com.example.akin.deneme.core;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.print.PrintAttributes;
-import android.support.annotation.CheckResult;
 
-import com.example.akin.deneme.core.model.*;
+import com.example.akin.deneme.core.model.Patient;
+import com.example.akin.deneme.core.model.Person;
+import com.example.akin.deneme.core.model.Prescription;
+import com.example.akin.deneme.core.model.Product;
+import com.example.akin.deneme.core.model.ProductAmount;
+import com.example.akin.deneme.core.model.Relative;
+import com.example.akin.deneme.core.model.Sale;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +19,17 @@ import java.util.List;
 public class DataBase extends SQLiteOpenHelper {
 
     private ModelConverter modelConverter;
-    private SQLiteDatabase dbW;
 
     public DataBase(Context context) {
+
         super(context, "MedicalDatabase", null, 1);
         modelConverter = new ModelConverter();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        List<String> tables = new ArrayList<>();
 
         String createTablePerson = "CREATE TABLE " + "person" + "("
                 + "tc" + " INTEGER PRIMARY KEY,"
@@ -34,43 +38,41 @@ public class DataBase extends SQLiteOpenHelper {
                 + "address" + " TEXT,"
                 + "cordinate" + " TEXT,"
                 + "phoneNumber" + " INTEGER)";
+        db.execSQL(createTablePerson);
 
         String createTableProduct = "CREATE TABLE " + "product" + "("
                 + "barCode" + " TEXT PRIMARY KEY,"
                 + "serialNumber" + " TEXT,"
                 + "type" + " TEXT)";
+        db.execSQL(createTableProduct);
+
         String createTablePrescription = "CREATE TABLE " + "prescription" + "("
                 + "id" + " INTEGER PRIMARY KEY,"
                 + "date" + " LONG,"
                 + "duration" + " INTEGER)";
+        db.execSQL(createTablePrescription);
 
         String createTablePatientRelative = "CREATE TABLE " + "patientRelative" + "("
-                + "patientTC" + " INTEGER REFERENCES person(tc),"
-                + "relativeTC" + " INTEGER REFERENCES person(tc),"
+                + "patientTC" + " INTEGER REFERENCES person(tc) ON UPDATE CASCADE ON DELETE CASCADE,"
+                + "relativeTC" + " INTEGER REFERENCES person(tc) ON UPDATE CASCADE ON DELETE CASCADE,"
                 + "relativity" + " TEXT,"
                 + "PRIMARY KEY(patientTC,relativeTC))";
-
+        db.execSQL(createTablePatientRelative);
 
         String createTablePrescriptionProduct = "CREATE TABLE " + "prescriptionProduct" + "("
-                + "prescriptionId" + " INTEGER REFERENCES prescription(id),"
-                + "productBarCode" + " INTEGER REFERENCES product(barCode),"
+                + "prescriptionId" + " INTEGER REFERENCES prescription(id) ON UPDATE CASCADE ON DELETE CASCADE,"
+                + "productBarCode" + " INTEGER REFERENCES product(barCode) ON UPDATE CASCADE ON DELETE CASCADE,"
                 + "productAmount" + " INTEGER,"
                 + "PRIMARY KEY(prescriptionId,productBarCode))";
+        db.execSQL(createTablePrescriptionProduct);
 
         String createTableSale = "CREATE TABLE " + "sale" + "("
-                + "prescriptionId" + " INTEGER REFERENCES prescription(Id),"
-                + "patientTC" + " INTEGER REFERENCES person(tc),"
-                + "relativeTC" + " INTEGER REFERENCES person(tc),"
+                + "prescriptionId" + " INTEGER REFERENCES prescription(Id) ON UPDATE CASCADE ON DELETE CASCADE,"
+                + "patientTC" + " INTEGER REFERENCES person(tc) ON UPDATE CASCADE ON DELETE CASCADE,"
+                + "relativeTC" + " INTEGER REFERENCES person(tc) ON UPDATE CASCADE ON DELETE CASCADE,"
                 + "date" + " LONG,"
                 + "PRIMARY KEY(prescriptionId))";
-
-        db.execSQL(createTablePerson);
-        db.execSQL(createTableProduct);
-        db.execSQL(createTablePrescription);
-        db.execSQL(createTablePatientRelative);
-        db.execSQL(createTablePrescriptionProduct);
         db.execSQL(createTableSale);
-
     }
 
     public void deletePerson(Person person) {
@@ -83,12 +85,16 @@ public class DataBase extends SQLiteOpenHelper {
 
                 if (cursor.getCount() == 1) {
 
-                    dbW.delete("person", "tc = ?", new String[]{String.valueOf(person.getTc())});
+                    db.delete("person", "tc = ?", new String[]{String.valueOf(person.getTc())});
                 }
             }
         }
     }
 
+    /**
+     * @param patient
+     * @param relative
+     */
     public void deletePatientRelative(Patient patient, Relative relative) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
@@ -99,7 +105,7 @@ public class DataBase extends SQLiteOpenHelper {
 
                 if (cursor.getCount() == 1) {
 
-                    dbW.delete("patientRelative", "patientTC = ? and relativeTC = ?",
+                    db.delete("patientRelative", "patientTC = ? and relativeTC = ?",
                             new String[]{String.valueOf(patient.getTc()), String.valueOf(relative.getTc())});
                 }
             }
@@ -116,7 +122,7 @@ public class DataBase extends SQLiteOpenHelper {
 
                 if (cursor.getCount() == 0) {
 
-                    dbW.insert("patientRelative", null, modelConverter.person(person));
+                    db.insert("patientRelative", null, modelConverter.person(person));
 
                     return true;
                 }
@@ -135,7 +141,7 @@ public class DataBase extends SQLiteOpenHelper {
 
                 if (cursor.getCount() == 0) {
 
-                    dbW.insert("patientRelative", null, modelConverter.patientAndRelative(patient));
+                    db.insert("patientRelative", null, modelConverter.patientAndRelative(patient));
 
                     return true;
                 }
@@ -155,7 +161,7 @@ public class DataBase extends SQLiteOpenHelper {
                 if (cursor.getCount() == 0) {
 
                     if (cursor.getCount() == 0)
-                        dbW.insert("patientRelative", null, modelConverter.product(product));
+                        db.insert("patientRelative", null, modelConverter.product(product));
 
                     return true;
                 }
@@ -174,7 +180,7 @@ public class DataBase extends SQLiteOpenHelper {
 
                 if (cursor.getCount() == 1) {
 
-                    dbW.delete("product", "barCode = ?", new String[]{String.valueOf(product.getBarCode())});
+                    db.delete("product", "barCode = ?", new String[]{String.valueOf(product.getBarCode())});
                 }
             }
         }
@@ -182,7 +188,7 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void makeSale(Sale sale) {
 
-        try(SQLiteDatabase db = this.getWritableDatabase()) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             addPerson(sale.getPatient());
             addPerson(sale.getPatient().getRelatives().get(0).getRelative());
@@ -202,19 +208,43 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void deleteSale(Sale sale) {
 
-        dbW = this.getWritableDatabase();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-        dbW.delete("sale", "prescriptionId = ?", new String[]{String.valueOf(sale.getPrescription().getId())});
-        dbW.delete("prescriptionProduct", "prescriptionId = ?", new String[]{String.valueOf(sale.getPrescription().getId())});
+            db.delete("sale", "prescriptionId = ?", new String[]{String.valueOf(sale.getPrescription().getId())});
+            db.delete("prescriptionProduct", "prescriptionId = ?", new String[]{String.valueOf(sale.getPrescription().getId())});
 
-        for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
+            for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
 
-            dbW.delete("product", "barCode = ?", new String[]{productAmount.getProduct().getBarCode()});
+                db.delete("product", "barCode = ?", new String[]{productAmount.getProduct().getBarCode()});
+            }
+
+            deletePatientRelative(sale.getPatient(), sale.getRelative());
+            deletePerson(sale.getPatient());
+            deletePerson(sale.getRelative());
         }
+    }
 
-        deletePatientRelative(sale.getPatient(), sale.getRelative());
-        deletePerson(sale.getPatient());
-        deletePerson(sale.getRelative());
+    public void updatePerson(String tc,Person person){
+
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+
+            db.update("person", modelConverter.person(person), "tc = ?",
+                    new String[] { tc });
+        }
+    }
+
+    public void updateProduct(String barCode,Product product){
+
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+
+            db.update("product", modelConverter.product(product), "barCode = ?",
+                    new String[] { barCode });
+        }
+    }
+
+    public void updatePrescription(Long id, Prescription prescription){
+
+
     }
 
     @Override
