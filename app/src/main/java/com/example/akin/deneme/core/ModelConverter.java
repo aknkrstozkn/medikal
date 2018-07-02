@@ -7,6 +7,7 @@ import com.example.akin.deneme.core.model.Person;
 import com.example.akin.deneme.core.model.Prescription;
 import com.example.akin.deneme.core.model.Product;
 import com.example.akin.deneme.core.model.ProductAmount;
+import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
 
 /**
@@ -37,13 +38,13 @@ public class ModelConverter {
         return values;
     }
 
-    protected ContentValues patientAndRelative(Patient patient) {
+    protected ContentValues patientAndRelative(String patientTC, Relativity relativity) {
 
         ContentValues values = new ContentValues();
 
-        values.put("patientTC", patient.getTc());
-        values.put("relativeTC", patient.getRelatives().get(0).getRelative().getTc());
-        values.put("relativity", patient.getRelatives().get(0).getRelativity());
+        values.put("patientTC", patientTC);
+        values.put("relativeTC", relativity.getRelative().getTc());
+        values.put("relativity", relativity.getRelativity());
 
         return values;
     }
