@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataBase extends SQLiteOpenHelper {
-    private ModelConverter modelConverter;
 
-    private SQLiteDatabase dbR;
+    private ModelConverter modelConverter;
     private SQLiteDatabase dbW;
 
     public DataBase(Context context) {
@@ -76,142 +75,129 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void deletePerson(Person person) {
 
-        dbW = this.getWritableDatabase();
-        dbR = this.getReadableDatabase();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-        String selectQuery = "SELECT * FROM " + "sale" + " WHERE " + "tc" + "=" + person.getTc();
-        Cursor cursor = dbR.rawQuery(selectQuery, null);
+            String selectQuery = "SELECT * FROM " + "sale" + " WHERE " + "tc" + "=" + person.getTc();
 
-        if (cursor.getCount() == 1) {
+            try (Cursor cursor = db.rawQuery(selectQuery, null);) {
 
-            dbW.delete("person", "tc = ?", new String[]{String.valueOf(person.getTc())});
+                if (cursor.getCount() == 1) {
+
+                    dbW.delete("person", "tc = ?", new String[]{String.valueOf(person.getTc())});
+                }
+            }
         }
-
-        dbW.close();
-        dbR.close();
     }
 
     public void deletePatientRelative(Patient patient, Relative relative) {
-        try(SQLiteDatabase db = this.getWritableDatabase()){
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+
             String selectQuery = "SELECT * FROM " + "sale" + " WHERE " + "patientTC" + "=" + patient.getTc()
                     + "and relativeTC = " + relative.getTc();
-            try(Cursor cursor = db.rawQuery(selectQuery, null)){
+
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
+
                 if (cursor.getCount() == 1) {
+
                     dbW.delete("patientRelative", "patientTC = ? and relativeTC = ?",
                             new String[]{String.valueOf(patient.getTc()), String.valueOf(relative.getTc())});
                 }
-
             }
         }
     }
 
     public boolean addPerson(Person person) {
 
-        dbW = this.getWritableDatabase();
-        dbR = this.getReadableDatabase();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-        String selectQuery = "SELECT * FROM " + "person" + " WHERE " + "tc" + "=" + person.getTc();
-        Cursor cursor = dbR.rawQuery(selectQuery, null);
+            String selectQuery = "SELECT * FROM " + "person" + " WHERE " + "tc" + "=" + person.getTc();
 
-        if (cursor.getCount() == 0) {
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
-            dbW.insert("patientRelative", null, modelConverter.person(person));
+                if (cursor.getCount() == 0) {
 
-            cursor.close();
-            dbR.close();
-            dbW.close();
-            return true;
+                    dbW.insert("patientRelative", null, modelConverter.person(person));
+
+                    return true;
+                }
+            }
         }
-
-        cursor.close();
-        dbR.close();
-        dbW.close();
         return false;
     }
 
     public boolean addPatientRelative(Patient patient) {
 
-        String selectQuery = "SELECT * FROM " + "patientRelative" + " WHERE " + "patientTC " + "= " + patient.getTc() + " and relativeTC = " + patient.getRelatives().get(0).getRelative().getTc();
-        Cursor cursor = dbR.rawQuery(selectQuery, null);
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-        if (cursor.getCount() == 0) {
+            String selectQuery = "SELECT * FROM " + "patientRelative" + " WHERE " + "patientTC " + "= " + patient.getTc() + " and relativeTC = " + patient.getRelatives().get(0).getRelative().getTc();
 
-            dbW.insert("patientRelative", null, modelConverter.patientAndRelative(patient));
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
-            cursor.close();
-            dbR.close();
-            dbW.close();
-            return true;
+                if (cursor.getCount() == 0) {
+
+                    dbW.insert("patientRelative", null, modelConverter.patientAndRelative(patient));
+
+                    return true;
+                }
+            }
         }
-
-        cursor.close();
-        dbR.close();
-        dbW.close();
         return false;
     }
 
     public boolean addProduct(Product product) {
 
-        dbW = this.getWritableDatabase();
-        dbR = this.getReadableDatabase();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-        String selectQuery = "SELECT * FROM " + "product" + " WHERE " + "barCode" + "=" + product.getBarCode();
-        Cursor cursor = dbR.rawQuery(selectQuery, null);
+            String selectQuery = "SELECT * FROM " + "product" + " WHERE " + "barCode" + "=" + product.getBarCode();
 
-        if (cursor.getCount() == 0) {
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
-            if (cursor.getCount() == 0)
-                dbW.insert("patientRelative", null, modelConverter.product(product));
+                if (cursor.getCount() == 0) {
 
-            cursor.close();
-            dbW.close();
-            dbR.close();
-            return true;
+                    if (cursor.getCount() == 0)
+                        dbW.insert("patientRelative", null, modelConverter.product(product));
+
+                    return true;
+                }
+            }
         }
-
-        cursor.close();
-        dbR.close();
-        dbW.close();
         return false;
     }
 
     public void deleteProduct(Product product) {
 
-        dbW = this.getWritableDatabase();
-        dbR = this.getReadableDatabase();
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-        String selectQuery = "SELECT * FROM " + "prescriptionProduct" + " WHERE " + "productBarCode" + "=" + product.getBarCode();
-        Cursor cursor = dbR.rawQuery(selectQuery, null);
+            String selectQuery = "SELECT * FROM " + "prescriptionProduct" + " WHERE " + "productBarCode" + "=" + product.getBarCode();
 
-        if (cursor.getCount() == 1) {
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
-            dbW.delete("product", "barCode = ?", new String[]{String.valueOf(product.getBarCode())});
+                if (cursor.getCount() == 1) {
+
+                    dbW.delete("product", "barCode = ?", new String[]{String.valueOf(product.getBarCode())});
+                }
+            }
         }
-
-        dbR.close();
-        dbW.close();
     }
 
     public void makeSale(Sale sale) {
 
-        dbW = this.getWritableDatabase();
+        try(SQLiteDatabase db = this.getWritableDatabase()) {
 
-        addPerson(sale.getPatient());
-        addPerson(sale.getPatient().getRelatives().get(0).getRelative());
-        addPatientRelative(sale.getPatient());
+            addPerson(sale.getPatient());
+            addPerson(sale.getPatient().getRelatives().get(0).getRelative());
+            addPatientRelative(sale.getPatient());
+            Long prescriptionId = db.insert("prescription", null, modelConverter.prescription(sale.getPrescription()));
+            sale.getPrescription().setId(prescriptionId);
 
-        Long prescriptionId = dbW.insert("prescription", null, modelConverter.prescription(sale.getPrescription()));
-        sale.getPrescription().setId(prescriptionId);
+            for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
 
-        for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
+                addProduct(productAmount.getProduct());
+                db.insert("prescriptionProduct", null, modelConverter.prescriptionProduct(prescriptionId, productAmount));
+            }
 
-            addProduct(productAmount.getProduct());
-            dbW.insert("prescriptionProduct", null, modelConverter.prescriptionProduct(prescriptionId, productAmount));
+            db.insert("sale", null, modelConverter.sale(sale));
         }
-
-        dbW.insert("sale", null, modelConverter.sale(sale));
-
-        dbW.close();
     }
 
     public void deleteSale(Sale sale) {
