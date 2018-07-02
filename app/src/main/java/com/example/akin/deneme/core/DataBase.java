@@ -11,6 +11,7 @@ import com.example.akin.deneme.core.model.Prescription;
 import com.example.akin.deneme.core.model.Product;
 import com.example.akin.deneme.core.model.ProductAmount;
 import com.example.akin.deneme.core.model.Relative;
+import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
 
 import java.util.ArrayList;
@@ -131,17 +132,17 @@ public class DataBase extends SQLiteOpenHelper {
         return false;
     }
 
-    public boolean addPatientRelative(Patient patient) {
+    public boolean addPatientRelative(String patientTC, Relativity relativity) {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
-            String selectQuery = "SELECT * FROM " + "patientRelative" + " WHERE " + "patientTC " + "= " + patient.getTc() + " and relativeTC = " + patient.getRelatives().get(0).getRelative().getTc();
+            String selectQuery = "SELECT * FROM " + "patientRelative" + " WHERE " + "patientTC " + "= " + patientTC + " and relativeTC = " + relativity.getRelative().getTc();
 
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
 
                 if (cursor.getCount() == 0) {
 
-                    db.insert("patientRelative", null, modelConverter.patientAndRelative(patient));
+                    db.insert("patientRelative", null, modelConverter.patientAndRelative(patientTC,relativity));
 
                     return true;
                 }
@@ -192,7 +193,7 @@ public class DataBase extends SQLiteOpenHelper {
 
             addPerson(sale.getPatient());
             addPerson(sale.getPatient().getRelatives().get(0).getRelative());
-            addPatientRelative(sale.getPatient());
+            addPatientRelative(sale.getPatient().getTc(), sale.getPatient().getRelatives().get(0));
             Long prescriptionId = db.insert("prescription", null, modelConverter.prescription(sale.getPrescription()));
             sale.getPrescription().setId(prescriptionId);
 
@@ -244,8 +245,41 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void updatePrescription(Long id, Prescription prescription){
 
+        try(SQLiteDatabase db = this.getWritableDatabase()){
 
+            db.update("prescription", modelConverter.prescription(prescription), "id = ?",
+                    new String[] { String.valueOf(id) });
+        }
     }
+
+    public void updateSale(Long prescriptionId, Sale sale){
+
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+
+            db.update("sale", modelConverter.sale(sale), "prescriptionId = ?",
+                    new String[] { String.valueOf(prescriptionId) });
+        }
+    }
+
+    public void updatePrescriptionProduct(Long prescriptionId, String productBarCode, ProductAmount productAmount){
+
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+
+            db.update("prescriptionProduct", modelConverter.prescriptionProduct(prescriptionId, productAmount), "prescriptionId = ? and productBarCode = ?",
+                    new String[] { String.valueOf(prescriptionId), productBarCode });
+        }
+    }
+
+    public void updatePatientRelative(String relativeTC, String patientTC, Relativity relativity){
+
+        try(SQLiteDatabase db = this.getWritableDatabase()){
+
+            db.update("patientRelative", modelConverter.patientAndRelative(patientTC, relativity), "patientTC = ? and relativeTC = ?",
+                    new String[] { patientTC, relativeTC });
+        }
+    }
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
