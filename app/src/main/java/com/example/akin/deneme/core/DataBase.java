@@ -27,8 +27,6 @@ public class DataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        List<String> tables = new ArrayList<>();
-
         String createTablePerson = "CREATE TABLE " + "person" + "("
                 + "tc" + " INTEGER PRIMARY KEY,"
                 + "name" + " TEXT,"
