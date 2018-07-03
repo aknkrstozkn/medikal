@@ -19,10 +19,12 @@ import java.util.List;
 
 public class DataBase extends SQLiteOpenHelper {
     private ModelConverter modelConverter;
+    private DataConverter dataConverter;
 
     public DataBase(Context context) {
         super(context, "MedicalDatabase", null, 1);
         modelConverter = new ModelConverter();
+        dataConverter = new DataConverter();
     }
 
     @Override
@@ -224,7 +226,14 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
-
+    public Product getProduct(String barCode){
+        try(SQLiteDatabase db = this.getReadableDatabase()){
+            String selectQuery = "SELECT * FROM " + "product" + " WHERE " + "barCode" + "=" + barCode;
+            try(Cursor cursor = db.rawQuery(selectQuery, null)){
+                return dataConverter.product(cursor);
+            }
+        }
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

@@ -15,7 +15,6 @@ import com.example.akin.deneme.core.model.Sale;
  */
 public class ModelConverter {
 
-
     protected ContentValues prescription(Prescription prescription) {
 
         ContentValues values = new ContentValues();
