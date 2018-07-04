@@ -13,8 +13,10 @@ import com.example.akin.deneme.core.model.ProductAmount;
 import com.example.akin.deneme.core.model.Relative;
 import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
+import com.google.gson.internal.bind.SqlDateTypeAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DataBase extends SQLiteOpenHelper {
@@ -132,8 +134,7 @@ public class DataBase extends SQLiteOpenHelper {
             String selectQuery = "SELECT * FROM " + "product" + " WHERE " + "barCode" + "=" + product.getBarCode();
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.getCount() == 0) {
-                    if (cursor.getCount() == 0)
-                        db.insert("patientRelative", null, modelConverter.product(product));
+                    db.insert("patientRelative", null, modelConverter.product(product));
                     return true;
                 }
             }
@@ -230,7 +231,56 @@ public class DataBase extends SQLiteOpenHelper {
         try(SQLiteDatabase db = this.getReadableDatabase()){
             String selectQuery = "SELECT * FROM " + "product" + " WHERE " + "barCode" + "=" + barCode;
             try(Cursor cursor = db.rawQuery(selectQuery, null)){
+                cursor.moveToFirst();
                 return dataConverter.product(cursor);
+            }
+        }
+    }public List<Product> getProducts(){
+        List<Product> products = new ArrayList<>();
+
+        try(SQLiteDatabase db = this.getReadableDatabase()){
+            String selectQuery = "SELECT * FROM product";
+            try(Cursor cursor = db.rawQuery(selectQuery, null)){
+                if (cursor.moveToFirst()) {
+                    do {
+                        products.add(dataConverter.product(cursor));
+                    } while (cursor.moveToNext());
+                }
+            }
+        }
+        return products;
+    }
+
+    public Relative getRelative(String tc){
+        try(SQLiteDatabase db = this.getReadableDatabase()) {
+            String selectQuery = "SELECT * FROM person WHERE tc = " + tc ;
+            try(Cursor cursor = db.rawQuery(selectQuery, null)){
+                cursor.moveToFirst();
+                return dataConverter.relative(cursor);
+            }
+        }
+    }
+
+    public List<Relativity> getRelativity(String tc){
+        List<Relativity> relativities = new ArrayList<>();
+        try(SQLiteDatabase db= this.getReadableDatabase()){
+            String relativityQuery = "SELECT relativeTC, relativity FROM patientRelative WHERE patientTC = " + tc;
+            try(Cursor cursor = db.rawQuery(relativityQuery, null)) {
+                if (cursor.moveToFirst()) {
+                    do {
+                        relativities.add(dataConverter.relativity(cursor,getRelative(cursor.getString(cursor.getColumnIndex("relativeTC")))));
+                    } while (cursor.moveToNext());
+                }
+            }
+        }
+        return relativities;
+    }
+
+    public Patient getPatient(String tc){
+        try(SQLiteDatabase db= this.getReadableDatabase()){
+            String patientQuery = "SELECT * FROM person WHERE tc = " + tc;
+            try(Cursor cursor = db.rawQuery(patientQuery, null)) {
+                return dataConverter.patient(cursor,getRelativity(tc));
             }
         }
     }

@@ -40,7 +40,6 @@ public class DataConverter {
     protected Sale sale(Cursor cursor, Prescription prescription, Patient patient, Relative relative) {
 
         Sale sale = new Sale();
-        cursor.moveToFirst();
 
         sale.setPatient(patient);
         sale.setRelative(relative);
@@ -53,7 +52,6 @@ public class DataConverter {
     protected Prescription prescription(Cursor cursor, ArrayList<ProductAmount> productAmount) {
 
         Prescription prescription = new Prescription();
-        cursor.moveToFirst();
 
         prescription.setId(cursor.getLong(0));
         prescription.setDate(cursor.getLong(1));
@@ -64,10 +62,9 @@ public class DataConverter {
 
     }
 
-    protected Patient patient(Cursor cursor, ArrayList<Relativity>  relativities) {
+    protected Patient patient(Cursor cursor, List<Relativity>  relativities) {
 
         Patient patient = new Patient();
-        cursor.moveToFirst();
 
         patient.setTc(cursor.getString(0));
         patient.setName(cursor.getString(1));
@@ -85,7 +82,7 @@ public class DataConverter {
         Relativity relativity = new Relativity();
 
         relativity.setRelative(relative);
-        relativity.setRelativity(cursor.getColumnName(cursor.getColumnIndex("relativity")));
+        relativity.setRelativity(cursor.getString(cursor.getColumnIndex("relativity")));
 
         return relativity;
 
@@ -94,7 +91,6 @@ public class DataConverter {
     protected Relative relative(Cursor cursor) {
 
         Relative relative = new Relative();
-        cursor.moveToFirst();
 
         relative.setTc(cursor.getString(0));
         relative.setName(cursor.getString(1));
