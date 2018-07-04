@@ -316,7 +316,7 @@ public class DataBase extends SQLiteOpenHelper {
         return productAmounts;
     }
 
-    public Prescription prescription(Long id){
+    public Prescription getPrescription(Long id){
         try(SQLiteDatabase db = this.getReadableDatabase()){
             String selectQuery = "SELECT * FROM prescription WHERE id = " + id;
             try(Cursor cursor = db.rawQuery(selectQuery, null)){
