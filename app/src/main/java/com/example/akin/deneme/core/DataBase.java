@@ -261,7 +261,7 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
-    public List<Relativity> getRelativity(String tc){
+    public List<Relativity> getRelativities(String tc){
         List<Relativity> relativities = new ArrayList<>();
         try(SQLiteDatabase db= this.getReadableDatabase()){
             String relativityQuery = "SELECT relativeTC, relativity FROM patientRelative WHERE patientTC = " + tc;
@@ -280,7 +280,47 @@ public class DataBase extends SQLiteOpenHelper {
         try(SQLiteDatabase db= this.getReadableDatabase()){
             String patientQuery = "SELECT * FROM person WHERE tc = " + tc;
             try(Cursor cursor = db.rawQuery(patientQuery, null)) {
-                return dataConverter.patient(cursor,getRelativity(tc));
+                return dataConverter.patient(cursor,getRelativities(tc));
+            }
+        }
+    }
+
+    public List<Patient> getPatients(){
+        List<Patient> patients = new ArrayList<>();
+
+        try (SQLiteDatabase db = this.getReadableDatabase()) {
+            String selectQuery = "SELECT * FROM person";
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
+                if(cursor.moveToFirst()){
+                    do {
+                        patients.add(getPatient(cursor.getString(cursor.getColumnIndex("tc"))));
+                    }while (cursor.moveToNext());
+                }
+            }
+        }
+        return patients;
+    }
+
+    public List<ProductAmount> getProductAmounts(Long prescriptionId){
+        List<ProductAmount> productAmounts = new ArrayList<>();
+        try (SQLiteDatabase db = this.getReadableDatabase()){
+            String selectQuery = "SELECT * FROM prescriptionProduct WHERE prescriptionId = " + prescriptionId;
+            try (Cursor cursor = db.rawQuery(selectQuery, null)){
+                if (cursor.moveToFirst()){
+                    do {
+                        productAmounts.add(dataConverter.productAmount(cursor, getProduct(cursor.getString(cursor.getColumnIndex("barCode")))));
+                    }while (cursor.moveToNext());
+                }
+            }
+        }
+        return productAmounts;
+    }
+
+    public Prescription prescription(Long id){
+        try(SQLiteDatabase db = this.getReadableDatabase()){
+            String selectQuery = "SELECT * FROM prescription WHERE id = " + id;
+            try(Cursor cursor = db.rawQuery(selectQuery, null)){
+                return dataConverter.prescription(cursor, getProductAmounts(id));
             }
         }
     }

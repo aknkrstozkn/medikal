@@ -49,7 +49,7 @@ public class DataConverter {
         return sale;
     }
 
-    protected Prescription prescription(Cursor cursor, ArrayList<ProductAmount> productAmount) {
+    protected Prescription prescription(Cursor cursor, List<ProductAmount> productAmount) {
 
         Prescription prescription = new Prescription();
 
