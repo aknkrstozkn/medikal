@@ -155,6 +155,8 @@ public class DataBase extends SQLiteOpenHelper {
         return false;
     }
 
+
+
     public void deleteProduct(String barCode) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             String selectQuery = "SELECT * FROM " + "prescriptionProduct" + " WHERE " + "productBarCode" + "=" + barCode;
@@ -166,19 +168,29 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
-    public void makeSale(Sale sale) {
+    public long addPrescription(Prescription prescription){
+        try (SQLiteDatabase db = this.getWritableDatabase()){
+            return db.insert("prescription", null, modelConverter.prescription(prescription));
+        }
+    }
+
+    public void addPrescriptionProduct(long prescriptionId, ProductAmount productAmount){
+        try (SQLiteDatabase db = this.getWritableDatabase()){
+            db.insert("prescriptionProduct", null, modelConverter.prescriptionProduct(prescriptionId,productAmount));
+        }
+    }
+
+    public void addSale(Sale sale) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             addPerson(sale.getPatient());
             addPerson(sale.getPatient().getRelatives().get(0).getRelative());
             addPatientRelative(sale.getPatient().getTc(), sale.getPatient().getRelatives().get(0));
-            Long prescriptionId = db.insert("prescription", null, modelConverter.prescription(sale.getPrescription()));
-            sale.getPrescription().setId(prescriptionId);
+            sale.getPrescription().setId(addPrescription(sale.getPrescription()));
 
             for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
                 addProduct(productAmount.getProduct());
-                db.insert("prescriptionProduct", null, modelConverter.prescriptionProduct(prescriptionId, productAmount));
+                addPrescriptionProduct(sale.getPrescription().getId(),productAmount);
             }
-
             db.insert("sale", null, modelConverter.sale(sale));
         }
     }
