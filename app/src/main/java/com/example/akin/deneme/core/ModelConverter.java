@@ -20,8 +20,8 @@ public class ModelConverter {
         ContentValues values = new ContentValues();
 
         values.put("id", prescription.getId());
-        values.put("date", prescription.getsDate());
-        values.put("duration", prescription.geteDate());
+        values.put("sDate", prescription.getsDate());
+        values.put("eDate", prescription.geteDate());
         values.put("validity", prescription.getValidity());
 
         return values;
