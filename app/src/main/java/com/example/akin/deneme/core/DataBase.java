@@ -16,6 +16,8 @@ import com.example.akin.deneme.core.model.Sale;
 import com.google.gson.internal.bind.SqlDateTypeAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,8 +50,9 @@ public class DataBase extends SQLiteOpenHelper {
 
         String createTablePrescription = "CREATE TABLE " + "prescription" + "("
                 + "id" + " INTEGER PRIMARY KEY,"
-                + "date" + " LONG,"
-                + "duration" + " INTEGER)";
+                + "sDate" + " LONG,"
+                + "eDate" + " LONG,"
+                + "validity" + " INTEGER DEFAULT 1)";
         db.execSQL(createTablePrescription);
 
         String createTablePatientRelative = "CREATE TABLE " + "patientRelative" + "("
@@ -97,25 +100,6 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Deletes the patientRelative if it was used only once because this deletion could make delete an other sales value.
-     * @param patient
-     * @param relative
-     */
-    /**
-    public void deletePatientRelative(Patient patient, Relative relative) {
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String selectQuery = "SELECT * FROM " + "sale" + " WHERE " + "patientTC" + "=" + patient.getTc()
-                    + "and relativeTC = " + relative.getTc();
-            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                if (cursor.getCount() == 1) {
-                    db.delete("patientRelative", "patientTC = ? and relativeTC = ?",
-                            new String[]{String.valueOf(patient.getTc()), String.valueOf(relative.getTc())});
-                }
-            }
-        }
-    }
-    **/
     public boolean addPerson(Person person) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             String selectQuery = "SELECT * FROM " + "person" + " WHERE " + "tc" + "=" + person.getTc();
@@ -171,6 +155,7 @@ public class DataBase extends SQLiteOpenHelper {
     public long addPrescription(Prescription prescription){
         try (SQLiteDatabase db = this.getWritableDatabase()){
             return db.insert("prescription", null, modelConverter.prescription(prescription));
+
         }
     }
 
@@ -193,10 +178,6 @@ public class DataBase extends SQLiteOpenHelper {
             }
             db.insert("sale", null, modelConverter.sale(sale));
         }
-    }
-
-    public void deletePrescriptionProduct(){
-
     }
 
     public void deletePrescription(Long id){
@@ -267,23 +248,7 @@ public class DataBase extends SQLiteOpenHelper {
             }
         }
     }
-    /**
-    public List<Product> getProducts(){
-        List<Product> products = new ArrayList<>();
 
-        try(SQLiteDatabase db = this.getReadableDatabase()){
-            String selectQuery = "SELECT * FROM product";
-            try(Cursor cursor = db.rawQuery(selectQuery, null)){
-                if (cursor.moveToFirst()) {
-                    do {
-                        products.add(dataConverter.product(cursor));
-                    } while (cursor.moveToNext());
-                }
-            }
-        }
-        return products;
-    }
-    **/
     public Relative getRelative(String tc){
         try(SQLiteDatabase db = this.getReadableDatabase()) {
             String selectQuery = "SELECT * FROM person WHERE tc = " + tc ;
@@ -375,7 +340,7 @@ public class DataBase extends SQLiteOpenHelper {
         List<Sale> sales = new ArrayList<>();
 
         try (SQLiteDatabase db = this.getReadableDatabase()){
-            String selectQuery = "SELECT * FROM sale";
+            String selectQuery = "SELECT s.prescriptionId,s.patientTC,s.relativeTC,s.date FROM sale AS s,prescription as p WHERE s.prescriptionId = p.id ORDER BY p.eDate ASC";
             try (Cursor cursor = db.rawQuery(selectQuery, null)){
                 if(cursor.moveToFirst()){
                     do {
@@ -388,6 +353,50 @@ public class DataBase extends SQLiteOpenHelper {
             }
         }
         return sales;
+    }
+
+    public List<Prescription> getOutOfDatePres(){
+        List<Prescription> prescriptions = new ArrayList<>();
+
+        try (SQLiteDatabase db = this.getReadableDatabase()){
+            String selectQuery = "SELECT id FROM prescription WHERE validity = 1 ORDER BY eDate ASC";
+            try (Cursor cursor = db.rawQuery(selectQuery, null)){
+                if(cursor.moveToFirst()){
+                    do {
+                        long pTime = getPrescription(cursor.getLong(0)).geteDate();
+                        Date date = new Date(pTime);
+                        Calendar calendar = Calendar.getInstance();
+
+                        if(date.before(calendar.getTime())){
+                            prescriptions.add(getPrescription(cursor.getLong(0)));
+                        }
+                    }while (cursor.moveToNext());
+                }
+            }
+        }
+        return prescriptions;
+    }
+
+    public List<Prescription> getValidPres(){
+        List<Prescription> prescriptions = new ArrayList<>();
+
+        try (SQLiteDatabase db = this.getReadableDatabase()){
+            String selectQuery = "SELECT id FROM prescription WHERE validity = 1 ORDER BY eDate ASC";
+            try (Cursor cursor = db.rawQuery(selectQuery, null)){
+                if(cursor.moveToFirst()){
+                    do {
+                        long pTime = getPrescription(cursor.getLong(0)).geteDate();
+                        Date date = new Date(pTime);
+                        Calendar calendar = Calendar.getInstance();
+
+                        if(date.after(calendar.getTime())){
+                            prescriptions.add(getPrescription(cursor.getLong(0)));
+                        }
+                    }while (cursor.moveToNext());
+                }
+            }
+        }
+        return prescriptions;
     }
 
     @Override
