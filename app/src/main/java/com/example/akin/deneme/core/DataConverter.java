@@ -30,9 +30,9 @@ public class DataConverter {
 
         Product product = new Product();
 
-        product.setBarCode(cursor.getString(0));
-        product.setSerialNumber(cursor.getString(1));
-        product.setType(cursor.getString(2));
+        product.setBarCode(cursor.getString(cursor.getColumnIndex("barCode")));
+        product.setSerialNumber(cursor.getString(cursor.getColumnIndex("serialNumber")));
+        product.setType(cursor.getString(cursor.getColumnIndex("type")));
 
         return product;
     }
@@ -53,10 +53,11 @@ public class DataConverter {
 
         Prescription prescription = new Prescription();
 
-        prescription.setId(cursor.getLong(0));
-        prescription.setDate(cursor.getLong(1));
-        prescription.setDuration(cursor.getInt(2));
+        prescription.setId(cursor.getLong(cursor.getColumnIndex("id")));
+        prescription.setsDate(cursor.getLong(cursor.getColumnIndex("sDate")));
+        prescription.seteDate(cursor.getLong(cursor.getColumnIndex("eDate")));
         prescription.setPrescriptionsProductList(productAmount);
+        prescription.setValidity(cursor.getInt(cursor.getColumnIndex("validity")));
 
         return prescription;
 
@@ -66,12 +67,12 @@ public class DataConverter {
 
         Patient patient = new Patient();
 
-        patient.setTc(cursor.getString(0));
-        patient.setName(cursor.getString(1));
-        patient.setSurname(cursor.getString(2));
-        patient.setAddress(cursor.getString(3));
-        patient.setCordinate(cursor.getString(4));
-        patient.setPhoneNumber(cursor.getString(5));
+        patient.setTc(cursor.getString(cursor.getColumnIndex("tc")));
+        patient.setName(cursor.getString(cursor.getColumnIndex("name")));
+        patient.setSurname(cursor.getString(cursor.getColumnIndex("surname")));
+        patient.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+        patient.setCordinate(cursor.getString(cursor.getColumnIndex("cordinate")));
+        patient.setPhoneNumber(cursor.getString(cursor.getColumnIndex("phoneNumber")));
         patient.setRelatives(relativities);
 
         return patient;
@@ -92,12 +93,12 @@ public class DataConverter {
 
         Relative relative = new Relative();
 
-        relative.setTc(cursor.getString(0));
-        relative.setName(cursor.getString(1));
-        relative.setSurname(cursor.getString(2));
-        relative.setAddress(cursor.getString(3));
-        relative.setCordinate(cursor.getString(4));
-        relative.setPhoneNumber(cursor.getString(5));
+        relative.setTc(cursor.getString(cursor.getColumnIndex("tc")));
+        relative.setName(cursor.getString(cursor.getColumnIndex("name")));
+        relative.setSurname(cursor.getString(cursor.getColumnIndex("surname")));
+        relative.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+        relative.setCordinate(cursor.getString(cursor.getColumnIndex("cordinate")));
+        relative.setPhoneNumber(cursor.getString(cursor.getColumnIndex("phoneNumber")));
 
         return relative;
     }
