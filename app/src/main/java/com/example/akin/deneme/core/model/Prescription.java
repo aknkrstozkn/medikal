@@ -10,45 +10,58 @@ public class Prescription {
     /**
      * Start date of the prescription
      */
-    private long date;
+    private long sDate;
     /**
      * current prescription's month duration
      */
-    private int duration;
-    /**
-     *
-     */
-    private List<ProductAmount> prescriptionsProductList;
+    private long eDate;
+    private int validity;
 
-    public void setId(Long id) {
-        this.id = id;
+    public int getValidity() {
+        return validity;
     }
 
-    public void setDate(long date) {
-        this.date = date;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public void setPrescriptionsProductList(List<ProductAmount> prescriptionsProductList) {
-        this.prescriptionsProductList = prescriptionsProductList;
+    public void setValidity(int validity) {
+        this.validity = validity;
     }
 
     public Long getId() {
         return id;
     }
 
-    public long getDate() {
-        return date;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public int getDuration() {
-        return duration;
+    public void setsDate(long sDate) {
+        this.sDate = sDate;
+    }
+
+    public void seteDate(long eDate) {
+        this.eDate = eDate;
+    }
+
+    public void setPrescriptionsProductList(List<ProductAmount> prescriptionsProductList) {
+        this.prescriptionsProductList = prescriptionsProductList;
+    }
+
+    public long getsDate() {
+        return sDate;
+    }
+
+    public long geteDate() {
+        return eDate;
     }
 
     public List<ProductAmount> getPrescriptionsProductList() {
         return prescriptionsProductList;
     }
+
+    /**
+     *
+     */
+
+    private List<ProductAmount> prescriptionsProductList;
+
+
 }
