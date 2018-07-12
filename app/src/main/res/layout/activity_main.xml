@@ -20,7 +20,7 @@
         android:background="@color/colorPrimary"
         android:textStyle="bold"
         android:textSize="16dp"
-        android:text="Günü Geçmiş Reçeteler (yok)"
+        android:text="Günü Geçmiş Reçeteler ( "
         android:gravity="center"
         android:textAllCaps="false"
         android:layout_width="match_parent"
