@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.AddSaleActivity">
+
+    <SearchView
+        android:id="@+id/searchViewTCOne"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:queryHint="TC"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <View
+        android:id="@+id/upperLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne"/>
+
+    <TextView
+        android:id="@+id/textPres"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="5.4dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="Reçete Bitişi"/>
+    <View
+        android:id="@+id/viewPres"
+        android:layout_width="2dp"
+        android:layout_height="27dp"
+        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne"
+        app:layout_constraintStart_toEndOf="@id/textPres"
+        android:background="@color/colorPrimaryDark"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="7dp"
+        />
+
+    <TextView
+        android:id="@+id/textPro"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="60dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="Malzemeler"
+        app:layout_constraintStart_toEndOf="@id/viewPres"
+        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne"/>
+
+    <View
+        android:id="@+id/blueBox"
+        android:layout_width="49dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_unfold_more_black_48x24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne"
+        />
+
+    <View
+        android:id="@+id/lastLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintTop_toBottomOf="@id/blueBox"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        app:layout_constraintTop_toBottomOf="@id/lastLine"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/recyclerView"
+        >
+
+        </android.support.v7.widget.RecyclerView>
+
+
+</android.support.constraint.ConstraintLayout>
