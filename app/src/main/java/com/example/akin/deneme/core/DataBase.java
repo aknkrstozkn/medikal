@@ -36,7 +36,6 @@ public class DataBase extends SQLiteOpenHelper {
         String createTablePerson = "CREATE TABLE " + "person" + "("
                 + "tc" + " INTEGER PRIMARY KEY,"
                 + "name" + " TEXT,"
-                + "surname" + " TEXT,"
                 + "address" + " TEXT,"
                 + "cordinate" + " TEXT,"
                 + "phoneNumber" + " INTEGER)";
