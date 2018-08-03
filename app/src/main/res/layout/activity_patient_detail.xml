@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:background="#ffffff"
+    tools:context=".ui.PatientDetailActivity">
+
+    <TextView
+        android:id="@+id/textViewPatientTC"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="TC : 16192221284"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />"
+
+        android:id="@+id/textViewPatientName"
+    <TextView
+        android:id="@+id/textViewPatientName"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="40dp"
+        android:gravity="center"
+        android:text="AKIN KÜRŞAT ÖZKAN"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/textViewPatientTC"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewPatientPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="Tel: 05458529996"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/textViewPatientTC"/>
+
+    <Button
+        android:id="@+id/buttonPatientGPS"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="64dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="GPS"
+        app:layout_constraintTop_toBottomOf="@id/textViewPatientName"
+        app:layout_constraintStart_toEndOf="@id/textViewPatientPhoneNumber"/>
+
+    <TextView
+        android:id="@+id/textViewPatientAddress"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:layout_marginTop="10dp"
+        android:gravity="top|left"
+        android:hint="ADRES"
+        android:textStyle="bold"
+        android:lines="3"
+        android:maxLines="5"
+        android:minLines="1"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf= "@id/textViewPatientPhoneNumber" />
+
+    <View
+        android:id="@+id/patientAddressLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintTop_toBottomOf="@id/textViewPatientAddress"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewRelative"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/patientAddressLine"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</android.support.constraint.ConstraintLayout>
