@@ -69,7 +69,6 @@ public class DataConverter {
 
         patient.setTc(cursor.getString(cursor.getColumnIndex("tc")));
         patient.setName(cursor.getString(cursor.getColumnIndex("name")));
-        patient.setSurname(cursor.getString(cursor.getColumnIndex("surname")));
         patient.setAddress(cursor.getString(cursor.getColumnIndex("address")));
         patient.setCordinate(cursor.getString(cursor.getColumnIndex("cordinate")));
         patient.setPhoneNumber(cursor.getString(cursor.getColumnIndex("phoneNumber")));
@@ -95,7 +94,6 @@ public class DataConverter {
 
         relative.setTc(cursor.getString(cursor.getColumnIndex("tc")));
         relative.setName(cursor.getString(cursor.getColumnIndex("name")));
-        relative.setSurname(cursor.getString(cursor.getColumnIndex("surname")));
         relative.setAddress(cursor.getString(cursor.getColumnIndex("address")));
         relative.setCordinate(cursor.getString(cursor.getColumnIndex("cordinate")));
         relative.setPhoneNumber(cursor.getString(cursor.getColumnIndex("phoneNumber")));
