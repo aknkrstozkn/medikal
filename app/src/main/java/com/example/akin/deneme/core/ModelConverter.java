@@ -55,7 +55,6 @@ public class ModelConverter {
 
         values.put("tc", person.getTc());
         values.put("name", person.getName());
-        values.put("surname", person.getSurname());
         values.put("address", person.getAddress());
         values.put("cordinate", person.getCordinate());
         values.put("phoneNumber", person.getPhoneNumber());
