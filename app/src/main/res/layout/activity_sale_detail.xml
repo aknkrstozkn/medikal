@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/buttonSetPatient"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:drawableRight="@android:drawable/arrow_down_float"
+        android:onClick="buttonPatient"
+        android:paddingRight="10dp"
+        android:text="Hasta Bilgileri"
+        android:textColor="#fff" />
+
+    <com.github.aakira.expandablelayout.ExpandableLinearLayout
+        android:id="@+id/expandableLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonSetPatient"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:ael_duration="400"
+        app:ael_expanded="false"
+        app:ael_interpolator="bounce">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/editTC"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="TC"
+                android:paddingStart="10dp" />
+
+            <EditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/editTC"
+                android:layout_marginTop="10dp"
+                android:hint="İSİM"
+                android:paddingStart="10dp" />
+
+            <EditText
+                android:id="@+id/editPhone"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/editName"
+                android:layout_marginTop="10dp"
+                android:hint="GSM"
+                android:inputType="phone"
+                android:paddingStart="10dp" />
+
+            <EditText
+                android:id="@+id/editAdress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editPhone"
+                android:layout_marginTop="10dp"
+                android:gravity="top|left"
+                android:hint="ADRES"
+                android:inputType="textMultiLine"
+                android:lines="5"
+                android:maxLines="5"
+                android:minLines="3"
+                android:paddingStart="10dp"
+                android:scrollbars="vertical" />
+
+            <RadioButton
+                android:id="@+id/radioCordinate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editAdress"
+                android:layout_marginTop="10dp"
+                android:text="Konumu Kaydet" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editAdress"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/radioCordinate"
+                android:text="Hasta Yakını Yok" />
+
+        </RelativeLayout>
+
+    </com.github.aakira.expandablelayout.ExpandableLinearLayout>
+
+
+    <Button
+        android:id="@+id/buttonSetRelative"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/expandableLayout1"
+        android:background="#ffffff"
+        android:drawableRight="@android:drawable/arrow_down_float"
+        android:onClick="buttonRelative"
+        android:paddingRight="10dp"
+        android:text="Hasta Yakını"
+        android:textColor="#000000"/>
+
+    <com.github.aakira.expandablelayout.ExpandableLinearLayout
+        android:id="@+id/expandableLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonSetRelative"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:ael_duration="400"
+        app:ael_expanded="false"
+        app:ael_interpolator="bounce">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/editRelativeTC"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="TC"
+                android:paddingStart="10dp" />
+
+            <EditText
+                android:id="@+id/editRelativeName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/editRelativeTC"
+                android:layout_marginTop="10dp"
+                android:hint="İSİM"
+                android:paddingStart="10dp" />
+
+            <EditText
+                android:id="@+id/editRelativePhone"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_below="@id/editRelativeName"
+                android:layout_marginTop="10dp"
+                android:hint="GSM"
+                android:inputType="phone"
+                android:paddingStart="10dp" />
+
+            <EditText
+                android:id="@+id/editRelativeAdress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editRelativePhone"
+                android:layout_marginTop="10dp"
+                android:gravity="top|left"
+                android:hint="ADRES"
+                android:inputType="textMultiLine"
+                android:lines="5"
+                android:maxLines="5"
+                android:minLines="3"
+                android:paddingStart="10dp"
+                android:scrollbars="vertical" />
+
+            <CheckBox
+                android:id="@+id/radioRelativeCordinate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editRelativeAdress"
+                android:layout_marginTop="10dp"
+                android:text="Konumu Kaydet" />
+
+            <EditText
+                android:id="@+id/editRelativity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Yakınlık Durumu"
+                android:layout_below="@id/editRelativeAdress"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/radioRelativeCordinate"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:layout_alignParentEnd="true"/>
+                
+
+        </RelativeLayout>
+    </com.github.aakira.expandablelayout.ExpandableLinearLayout>
+
+    <Button
+        android:id="@+id/buttonSetPrescription"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/expandableLayout2"
+        android:background="@color/colorPrimaryDark"
+        android:drawableRight="@android:drawable/arrow_down_float"
+        android:onClick="buttonPrescription"
+        android:paddingRight="10dp"
+        android:text="Reçete Bilgileri"
+        android:textColor="#fff" />
+
+    <com.github.aakira.expandablelayout.ExpandableLinearLayout
+        android:id="@+id/expandableLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonSetPrescription"
+        android:background="#fff"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:ael_duration="400"
+        app:ael_expanded="false"
+        app:ael_interpolator="bounce">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/editStartDate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Başlangıç Günü"
+                android:inputType="date"/>
+
+            <EditText
+                android:id="@+id/editEndDate"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="Bitiş Günü"
+                android:layout_below="@id/editStartDate"
+                android:layout_marginTop="10dp"
+                android:inputType="date"/>
+
+            <EditText
+                android:id="@+id/editProductName"
+                android:layout_width="156dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:hint="Ürün Adı"
+                android:layout_below="@id/editEndDate"
+                android:layout_marginTop="10dp"/>
+
+            <EditText
+                android:id="@+id/editProductAmount"
+                android:layout_width="72dp"
+                android:layout_height="48dp"
+                android:hint="Adedi"
+                android:layout_below="@id/editEndDate"
+                android:layout_toEndOf="@id/editProductName"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:inputType="number"/>
+
+            <android.support.design.widget.FloatingActionButton
+                app:backgroundTint="@color/colorPrimaryDark"
+                android:scaleType="center"
+                app:fabCustomSize="32dp"
+                android:id="@+id/buttonAddProductAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src= "@drawable/ic_add_black_32dp"
+                android:layout_below="@id/editEndDate"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="15dp"/>
+
+            <ListView
+                android:id="@+id/listProductAmount"
+                android:layout_width="260dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/editProductName"
+                android:layout_marginTop="10dp"
+                android:autofillHints="List"
+                android:background="#dddddd">
+            </ListView>
+
+            <android.support.design.widget.FloatingActionButton
+                app:backgroundTint="@color/colorPrimaryDark"
+                android:scaleType="center"
+                app:fabCustomSize="32dp"
+                android:id="@+id/buttonDeleteItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src= "@drawable/ic_remove_black_32dp"
+                android:layout_below="@id/buttonAddProductAmount"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="25dp"/>
+        </RelativeLayout>
+    </com.github.aakira.expandablelayout.ExpandableLinearLayout>
+
+</RelativeLayout>
