@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    android:background="#ffffff">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorPrimaryDark"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:layout_marginTop="48dp"
-        />
+        android:background="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimaryDark" />
 
     <RelativeLayout
         android:id="@+id/button"
@@ -20,8 +18,7 @@
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:gravity="center"
-        >
+        android:gravity="center">
 
         <View
             android:id="@+id/viewButton"
@@ -33,46 +30,43 @@
     <View
         android:layout_width="2dp"
         android:layout_height="48dp"
-        android:background="@color/colorPrimaryDark"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:layout_toStartOf="@id/button"
-        />
+        android:background="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/textViewEndDate"
-        android:text="19/05/2017"
-        android:textColor="@color/colorPrimaryDark"
-        android:gravity="center"
-        android:layout_marginStart="10dp"
-        android:textAlignment="center"
-        android:layout_marginTop="15dp"
-        android:textStyle="bold"
         android:layout_width="wrap_content"
-        android:layout_height="24dp" />
+        android:layout_height="24dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="19/05/2017"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold" />
 
 
     <View
         android:id="@+id/viewFirst"
         android:layout_width="2dp"
-        android:background="@color/colorPrimaryDark"
         android:layout_height="48dp"
-        android:layout_toEndOf="@id/textViewEndDate"
         android:layout_marginStart="20dp"
-        />
+        android:layout_toEndOf="@id/textViewEndDate"
+        android:background="@color/colorPrimaryDark" />
 
     <TextView
         android:id="@+id/textViewProductAmount"
-        android:text="120 tane bez, 240 tane sonda"
-        android:textStyle="bold"
-        android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_toEndOf="@+id/viewFirst"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/viewFirst"
         android:layout_toLeftOf="@id/button"
         android:gravity="center"
-        android:layout_marginStart="5dp"
-        />
+        android:text="120 tane bez, 240 tane sonda"
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
     <com.github.aakira.expandablelayout.ExpandableLinearLayout
         android:id="@+id/expandableLayout"
@@ -81,101 +75,94 @@
         android:layout_below="@id/textViewProductAmount"
         android:orientation="vertical"
         app:ael_duration="400"
-        app:ael_expanded="true"
-        app:ael_interpolator="bounce"
-        >
+        app:ael_expanded="false"
+        app:ael_interpolator="bounce">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/textDate"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:text="Reçete Tarihi"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textPresDate"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:gravity="center"
-                android:layout_marginStart="10dp"
                 android:layout_below="@id/textDate"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
                 android:text="19/05/1996"
                 android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
+
             <View
                 android:id="@+id/view1"
                 android:layout_width="2dp"
-                android:layout_marginStart="20dp"
-                android:background="@color/colorPrimaryDark"
                 android:layout_height="72dp"
+                android:layout_marginStart="20dp"
                 android:layout_toEndOf="@id/textPresDate"
-                />
+                android:background="@color/colorPrimaryDark" />
 
             <RelativeLayout
                 android:id="@+id/buttonSale"
-                android:layout_height="match_parent"
                 android:layout_width="72dp"
-                android:backgroundTintMode="screen"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
+                android:backgroundTintMode="screen"
                 android:textAllCaps="false">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:text="Satış"
-                    android:textStyle="bold"
-                    android:textSize="24dp"
                     android:textColor="@color/colorPrimaryDark"
-                    android:gravity="center"/>
+                    android:textSize="24dp"
+                    android:textStyle="bold" />
 
             </RelativeLayout>
 
             <View
                 android:id="@+id/view2"
                 android:layout_width="2dp"
-                android:background="@color/colorPrimaryDark"
                 android:layout_height="match_parent"
                 android:layout_toStartOf="@id/buttonSale"
-                />
+                android:background="@color/colorPrimaryDark" />
 
             <RelativeLayout
                 android:id="@+id/buttonPatient"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_toEndOf="@id/view1"
-                android:layout_toStartOf="@id/view2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_toStartOf="@id/view2">
 
-            <TextView
-                android:id="@+id/textName"
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="24dp"
-                android:gravity="center"
-                android:text="Hasta Adı"
-                android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/textName"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center"
+                    android:text="Hasta Adı"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textPatientName"
-                android:layout_width="match_parent"
-                android:layout_height="24dp"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:layout_below="@id/textName"
-                android:text="AKIN KURSAT OZKAN"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
-                />
+                <TextView
+                    android:id="@+id/textPatientName"
+                    android:layout_width="match_parent"
+                    android:layout_height="24dp"
+                    android:layout_below="@id/textName"
+                    android:gravity="center"
+                    android:text="AKIN KURSAT OZKAN"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
             </RelativeLayout>
-
-
-
-
 
 
         </RelativeLayout>
@@ -184,10 +171,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/colorPrimaryDark"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:layout_below="@id/expandableLayout"
-        />
+        android:background="@color/colorPrimaryDark"
+        android:backgroundTint="@color/colorPrimaryDark" />
 
 </RelativeLayout>
 

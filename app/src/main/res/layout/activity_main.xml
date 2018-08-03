@@ -7,11 +7,14 @@
     tools:context=".ui.MainActivity">
 
     <SearchView
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="12dp"
         android:id="@+id/searchViewTC"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:iconifiedByDefault="false"
         android:queryHint="TC"
+        android:focusable="false"
         android:textColor="@color/colorPrimaryDark" />
 
     <Button
@@ -19,7 +22,7 @@
         android:textColor="#000000"
         android:background="@color/colorPrimary"
         android:textStyle="bold"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:text="Günü Geçmiş Reçeteler ( "
         android:gravity="center"
         android:textAllCaps="false"
@@ -35,7 +38,7 @@
         android:textColor="#000000"
         android:background="@color/colorPrimary"
         android:textStyle="bold"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:text="Gününe Göre Reçeteler"
         android:gravity="center"
         android:textAllCaps="false"
@@ -51,7 +54,7 @@
         android:textColor="#000000"
         android:background="@color/colorPrimary"
         android:textStyle="bold"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:text="Tarihine Göre Satışlar"
         android:gravity="center"
         android:textAllCaps="false"
