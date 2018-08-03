@@ -29,6 +29,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button button = findViewById(R.id.buttonSales);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SaleDetailActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button buttonValid = findViewById(R.id.buttonValidPres);
+        buttonValid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PatientDetailActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 

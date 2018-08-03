@@ -12,6 +12,8 @@ import com.example.akin.deneme.core.model.Patient;
 import com.example.akin.deneme.core.model.Prescription;
 import com.example.akin.deneme.core.model.Product;
 import com.example.akin.deneme.core.model.ProductAmount;
+import com.example.akin.deneme.core.model.Relative;
+import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
 
 import java.util.ArrayList;
@@ -42,6 +44,22 @@ public class AddSaleActivity extends AppCompatActivity {
             Patient patient = new Patient();
             patient.setName("AKIN KURSAT OZKAN");
             patient.setTc("16192221284");
+            patient.setAddress("Kötekli Mahallesi 265. Sokak Fatma Altaş Apt. Kat 1 Daire 7");
+            patient.setPhoneNumber("05458529996");
+
+            Relative relative = new Relative();
+            relative.setName("ORHAN ÖZKAN");
+            relative.setTc("16195221066");
+            relative.setAddress("Müminli Mahallesi Toki Konutlaru No 6 ADANA/SARIÇAM");
+            relative.setPhoneNumber("05323036820");
+
+            Relativity relativity = new Relativity();
+            relativity.setRelative(relative);
+            relativity.setRelativity("Babası");
+            List<Relativity> relativities = new ArrayList<>();
+            relativities.add(relativity);
+
+            patient.setRelatives(relativities);
 
             Sale sale = new Sale();
             sale.setPatient(patient);
