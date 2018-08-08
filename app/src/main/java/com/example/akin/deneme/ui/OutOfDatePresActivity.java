@@ -5,8 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.akin.deneme.R;
 import com.example.akin.deneme.core.DataBase;
@@ -19,45 +19,29 @@ import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
-public class MainActivity extends AppCompatActivity {
+public class OutOfDatePresActivity extends AppCompatActivity {
     DataBase db;
-    public List<Sale> satislar = new ArrayList<>();
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        db = new DataBase(getApplicationContext());
+        setContentView(R.layout.activity_prescription_list);
 
-        Button butOutOfDatePres = findViewById(R.id.buttonOutOfDatePres);
-        butOutOfDatePres.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, OutOfDatePresActivity.class);
-                startActivity(intent);
-            }
-        });
+        db = new DataBase(this);
 
-        Button button = findViewById(R.id.buttonSales);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddSaleActivity.class);
-                startActivity(intent);
-            }
-        });
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-        Button buttonValid = findViewById(R.id.buttonValidPres);
-        buttonValid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddSaleActivity.class);
-                startActivity(intent);
-            }
-        });
-
+        mRecyclerView.setLayoutManager(mLayoutManager);
         Relative relative;
         List<Relativity> relativities;
         Patient patient;
@@ -112,15 +96,15 @@ public class MainActivity extends AppCompatActivity {
         sale.setPatient(patient);
         sale.setDate(calendar.getTimeInMillis());
         sale.setPrescription(prescription);
-
-        satislar.add(sale);
-        db.addSale(sale);
-
+        List<Sale> sales = new ArrayList<>();
+        sales.add(sale);
+        mAdapter = new MyAdapter(db.getSales());
+        mRecyclerView.setAdapter(mAdapter);
 
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Dikkat!");
-        builder.setMessage(db.getId());
+        builder.setMessage(String.valueOf(db.get()));
         builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int id) {
 
@@ -139,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         builder.show();
+
     }
 
 

@@ -6,7 +6,7 @@ public class Prescription {
     /**
      * prescription's key for database.
      */
-    private Long id;
+    private long id;
     /**
      * Start date of the prescription
      */
@@ -25,11 +25,11 @@ public class Prescription {
         this.validity = validity;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -1,10 +1,17 @@
 package com.example.akin.deneme.ui;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 
 import com.example.akin.deneme.R;
 import com.example.akin.deneme.core.DataBase;
@@ -15,9 +22,13 @@ import com.example.akin.deneme.core.model.ProductAmount;
 import com.example.akin.deneme.core.model.Relative;
 import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
+import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AddSaleActivity extends AppCompatActivity {
@@ -26,81 +37,238 @@ public class AddSaleActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DataBase db;
-
+    private ExpandableLinearLayout eLayoutPatient, eLayoutRelative, eLayoutPrescription;
+    private Relative relative;
+    private List<Relativity> relativities;
+    private Patient patient;
+    private Product product;
+    private List<ProductAmount> productAmounts;
+    private Prescription prescription;
+    private Sale sale;
+    private Context context = this;
+    private Calendar caledar;
+    private Button buttonSetStartDate, buttonSetEndDate;
+    private FloatingActionButton buttonMakeSale;
+    private int day, mounth, year;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_addsale);
+        setContentView(R.layout.activity_sale_detail);
+
+        caledar = Calendar.getInstance();
+        year = caledar.get(Calendar.YEAR);
+        mounth = caledar.get(Calendar.MONTH);
+        day = caledar.get(Calendar.DAY_OF_MONTH);
+
         db = new DataBase(this);
+        relative = new Relative();
+        relativities = new ArrayList<>();
+        patient = new Patient();
+        product = new Product();
+        productAmounts = new ArrayList<>();
+        prescription = new Prescription();
+        sale = new Sale();
 
-        //Adding some objects to test
-        List<Sale> sales = new ArrayList<>();
-        List<Prescription> prescriptions = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Product product = new Product();
-            product.setType("Bez");
+        buttonSetEndDate = findViewById(R.id.editEndDate);
+        buttonSetEndDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            Patient patient = new Patient();
-            patient.setName("AKIN KURSAT OZKAN");
-            patient.setTc("16192221284");
-            patient.setAddress("Kötekli Mahallesi 265. Sokak Fatma Altaş Apt. Kat 1 Daire 7");
-            patient.setPhoneNumber("05458529996");
+                DatePickerDialog dpd = new DatePickerDialog(context,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-            Relative relative = new Relative();
-            relative.setName("ORHAN ÖZKAN");
-            relative.setTc("16195221066");
-            relative.setAddress("Müminli Mahallesi Toki Konutlaru No 6 ADANA/SARIÇAM");
-            relative.setPhoneNumber("05323036820");
+                                month += 1;
+                                buttonSetEndDate.setText(dayOfMonth + "/" + month + "/" + year);
+                            }
+                        }, year, mounth, day);
 
-            Relativity relativity = new Relativity();
-            relativity.setRelative(relative);
-            relativity.setRelativity("Babası");
-            List<Relativity> relativities = new ArrayList<>();
-            relativities.add(relativity);
+                dpd.setButton(DatePickerDialog.BUTTON_POSITIVE, "Seç", dpd);
+                dpd.setButton(DatePickerDialog.BUTTON_NEGATIVE, "İptal", dpd);
+                dpd.show();
+            }
+        });
 
-            patient.setRelatives(relativities);
+        buttonSetStartDate = findViewById(R.id.editStartDate);
+        buttonSetStartDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            Sale sale = new Sale();
-            sale.setPatient(patient);
+                DatePickerDialog dpd = new DatePickerDialog(context,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-            Product product1 = new Product();
-            product1.setType("Sonda");
+                                month += 1;
+                                buttonSetStartDate.setText(dayOfMonth + "/" + month + "/" + year);
+                            }
+                        }, year, mounth, day);
 
-            ProductAmount productAmount = new ProductAmount();
-            productAmount.setProduct(product);
-            productAmount.setProductAmount(240);
+                dpd.setButton(DatePickerDialog.BUTTON_POSITIVE, "Seç", dpd);
+                dpd.setButton(DatePickerDialog.BUTTON_NEGATIVE, "İptal", dpd);
+                dpd.show();
+            }
+        });
 
-            ProductAmount productAmount1 = new ProductAmount();
-            productAmount1.setProduct(product1);
-            productAmount1.setProductAmount(120);
+        buttonMakeSale = findViewById(R.id.floatingButtonMakeSale);
+        buttonMakeSale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relative = getRelative();
+                relativities = getRelativities(relative);
+                patient = getPatient(relativities);
+                product = getProduct();
+                productAmounts = getProductAmounts(product);
+                prescription = getPrescription(productAmounts);
+                sale = getSale(prescription,patient,relative);
 
-            List<ProductAmount> productAmountList = new ArrayList<>();
-            productAmountList.add(productAmount);
-            productAmountList.add(productAmount1);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Dikkat!");
+                builder.setMessage("Bilgiler kaydedilecektir, emin misiniz?");
+                builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id) {
 
-            Prescription prescription = new Prescription();
+
+
+                    }
+                });
+
+
+                builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        db.addSale(sale);
+                    }
+                });
+
+
+                builder.show();
+            }
+        });
+
+
+
+
+
+
+    }
+
+    public void buttonPatient(View view) {
+        eLayoutPatient = findViewById(R.id.eLayoutPatient);
+        eLayoutPatient.toggle(); // toggle expand and collapse
+    }
+
+    public void buttonRelative(View view) {
+        eLayoutRelative = findViewById(R.id.eLayoutRelative);
+        eLayoutRelative.toggle(); // toggle expand and collapse
+    }
+
+    public void buttonPrescription(View view) {
+        eLayoutPrescription = findViewById(R.id.eLayoutPrescription);
+        eLayoutPrescription.toggle(); // toggle expand and collapse
+    }
+
+    private Patient getPatient(List<Relativity> relativities) {
+
+        Patient patient = new Patient();
+        EditText editPatientName = findViewById(R.id.editPatientName);
+        EditText editPatientTC = findViewById(R.id.editPatientTC);
+        EditText editPatientPhone = findViewById(R.id.editPatientPhone);
+        EditText editPatientAddress = findViewById(R.id.editPatientAddress);
+
+        patient.setRelatives(relativities);
+        patient.setPhoneNumber(editPatientPhone.getText().toString());
+        patient.setAddress(editPatientAddress.getText().toString());
+        patient.setTc(editPatientTC.getText().toString());
+        patient.setName(editPatientName.getText().toString());
+
+        return patient;
+    }
+
+    private Relative getRelative() {
+
+        Relative relative = new Relative();
+        EditText editRelativeName = findViewById(R.id.editRelativeName);
+        EditText editRelativeTC = findViewById(R.id.editRelativeTC);
+        EditText editRelativePhone = findViewById(R.id.editRelativePhone);
+        EditText editRelativeAddress = findViewById(R.id.editRelativeAddress);
+
+        relative.setAddress(editRelativeAddress.getText().toString());
+        relative.setTc(editRelativeTC.getText().toString());
+        relative.setName(editRelativeName.getText().toString());
+        relative.setPhoneNumber(editRelativePhone.getText().toString());
+
+        return relative;
+    }
+
+    private List<Relativity> getRelativities(Relative relative) {
+        List<Relativity> relativities = new ArrayList<>();
+        Relativity relativity = new Relativity();
+        EditText editRelativity = findViewById(R.id.editRelativity);
+
+        relativity.setRelative(relative);
+        relativity.setRelativity(editRelativity.getText().toString());
+        relativities.add(relativity);
+
+        return relativities;
+    }
+
+    private Product getProduct() {
+
+        Product product = new Product();
+        EditText editProductName = findViewById(R.id.editProductName);
+        product.setType(editProductName.getText().toString());
+
+        return product;
+    }
+
+    private List<ProductAmount> getProductAmounts(Product product) {
+
+        List<ProductAmount> productAmounts = new ArrayList<>();
+        ProductAmount productAmount = new ProductAmount();
+        EditText editProductAmount = findViewById(R.id.editProductAmount);
+
+        productAmount.setProduct(product);
+        productAmount.setProductAmount(Integer.parseInt(editProductAmount.getText().toString()));
+        productAmounts.add(productAmount);
+
+        return productAmounts;
+    }
+
+    private Prescription getPrescription(List<ProductAmount> productAmounts) {
+
+        Prescription prescription = new Prescription();
+        prescription.setPrescriptionsProductList(productAmounts);
+
+        try {
+
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            Date myDate = df.parse(buttonSetStartDate.getText().toString());
             Calendar calendar = Calendar.getInstance();
-            sale.setDate(calendar.getTimeInMillis());
-            prescription.seteDate(calendar.getTimeInMillis());
+            calendar.setTime(myDate);
             prescription.setsDate(calendar.getTimeInMillis());
-            prescription.setValidity(1);
-            prescription.setPrescriptionsProductList(productAmountList);
 
-            sale.setPrescription(prescription);
+            myDate = df.parse(buttonSetEndDate.getText().toString());
+            calendar.setTime(myDate);
+            prescription.seteDate(calendar.getTimeInMillis());
 
-            sales.add(sale);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
+        return prescription;
+    }
 
-        mRecyclerView = findViewById(R.id.recyclerView);
+    private Sale getSale(Prescription prescription, Patient patient, Relative relative){
 
-        mRecyclerView.setHasFixedSize(true);
+        Sale sale = new Sale();
 
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        sale.setDate(caledar.getTimeInMillis());
+        sale.setPrescription(prescription);
+        sale.setPatient(patient);
+        sale.setRelative(relative);
 
-        mAdapter = new MyAdapter(sales);
-        mRecyclerView.setAdapter(mAdapter);
-
+        return sale;
     }
 }

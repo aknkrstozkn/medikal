@@ -16,7 +16,7 @@
         android:textColor="#fff" />
 
     <com.github.aakira.expandablelayout.ExpandableLinearLayout
-        android:id="@+id/expandableLayout1"
+        android:id="@+id/eLayoutPatient"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonSetPatient"
@@ -32,36 +32,36 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/editTC"
+                android:id="@+id/editPatientTC"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="TC"
                 android:paddingStart="10dp" />
 
             <EditText
-                android:id="@+id/editName"
+                android:id="@+id/editPatientName"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_below="@id/editTC"
+                android:layout_below="@id/editPatientTC"
                 android:layout_marginTop="10dp"
                 android:hint="İSİM"
                 android:paddingStart="10dp" />
 
             <EditText
-                android:id="@+id/editPhone"
+                android:id="@+id/editPatientPhone"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_below="@id/editName"
+                android:layout_below="@id/editPatientName"
                 android:layout_marginTop="10dp"
                 android:hint="GSM"
                 android:inputType="phone"
                 android:paddingStart="10dp" />
 
             <EditText
-                android:id="@+id/editAdress"
+                android:id="@+id/editPatientAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/editPhone"
+                android:layout_below="@id/editPatientPhone"
                 android:layout_marginTop="10dp"
                 android:gravity="top|left"
                 android:hint="ADRES"
@@ -73,20 +73,20 @@
                 android:scrollbars="vertical" />
 
             <RadioButton
-                android:id="@+id/radioCordinate"
+                android:id="@+id/radioPatientCordinate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/editAdress"
+                android:layout_below="@id/editPatientAddress"
                 android:layout_marginTop="10dp"
                 android:text="Konumu Kaydet" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/editAdress"
+                android:layout_below="@id/editPatientAddress"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_toEndOf="@id/radioCordinate"
+                android:layout_toEndOf="@id/radioPatientCordinate"
                 android:text="Hasta Yakını Yok" />
 
         </RelativeLayout>
@@ -98,7 +98,7 @@
         android:id="@+id/buttonSetRelative"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/expandableLayout1"
+        android:layout_below="@id/eLayoutPatient"
         android:background="#ffffff"
         android:drawableRight="@android:drawable/arrow_down_float"
         android:onClick="buttonRelative"
@@ -107,7 +107,7 @@
         android:textColor="#000000"/>
 
     <com.github.aakira.expandablelayout.ExpandableLinearLayout
-        android:id="@+id/expandableLayout2"
+        android:id="@+id/eLayoutRelative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonSetRelative"
@@ -149,7 +149,7 @@
                 android:paddingStart="10dp" />
 
             <EditText
-                android:id="@+id/editRelativeAdress"
+                android:id="@+id/editRelativeAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editRelativePhone"
@@ -167,7 +167,7 @@
                 android:id="@+id/radioRelativeCordinate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/editRelativeAdress"
+                android:layout_below="@id/editRelativeAddress"
                 android:layout_marginTop="10dp"
                 android:text="Konumu Kaydet" />
 
@@ -176,7 +176,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Yakınlık Durumu"
-                android:layout_below="@id/editRelativeAdress"
+                android:layout_below="@id/editRelativeAddress"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@id/radioRelativeCordinate"
@@ -193,7 +193,7 @@
         android:id="@+id/buttonSetPrescription"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/expandableLayout2"
+        android:layout_below="@id/eLayoutRelative"
         android:background="@color/colorPrimaryDark"
         android:drawableRight="@android:drawable/arrow_down_float"
         android:onClick="buttonPrescription"
@@ -202,7 +202,7 @@
         android:textColor="#fff" />
 
     <com.github.aakira.expandablelayout.ExpandableLinearLayout
-        android:id="@+id/expandableLayout3"
+        android:id="@+id/eLayoutPrescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonSetPrescription"
@@ -210,27 +210,36 @@
         android:orientation="vertical"
         android:padding="16dp"
         app:ael_duration="400"
-        app:ael_expanded="false"
+        app:ael_expanded="true"
         app:ael_interpolator="bounce">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
+            <Button
                 android:id="@+id/editStartDate"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Başlangıç Günü"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="#ffffff"
+                android:textColor="@color/colorPrimaryDark"
                 android:inputType="date"/>
 
-            <EditText
+            <Button
                 android:id="@+id/editEndDate"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Bitiş Günü"
+                android:background="#ffffff"
+                android:textAlignment="gravity"
                 android:layout_below="@id/editStartDate"
                 android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
                 android:inputType="date"/>
 
             <EditText
@@ -257,7 +266,7 @@
                 app:backgroundTint="@color/colorPrimaryDark"
                 android:scaleType="center"
                 app:fabCustomSize="32dp"
-                android:id="@+id/buttonAddProductAmount"
+                android:id="@+id/buttonAddProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src= "@drawable/ic_add_black_32dp"
@@ -280,15 +289,26 @@
                 app:backgroundTint="@color/colorPrimaryDark"
                 android:scaleType="center"
                 app:fabCustomSize="32dp"
-                android:id="@+id/buttonDeleteItem"
+                android:id="@+id/buttonRemoveProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src= "@drawable/ic_remove_black_32dp"
-                android:layout_below="@id/buttonAddProductAmount"
+                android:layout_below="@id/buttonAddProduct"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="25dp"/>
         </RelativeLayout>
     </com.github.aakira.expandablelayout.ExpandableLinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        app:fabSize="normal"
+        app:backgroundTint="@color/colorPrimaryDark"
+        android:scaleType="center"
+        android:id="@+id/floatingButtonMakeSale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src= "@drawable/ic_add_circle_black_64dp"
+        android:layout_below="@id/eLayoutPrescription"
+        android:layout_marginStart="180dp"/>
 
 </RelativeLayout>

@@ -19,10 +19,9 @@ public class ModelConverter {
 
         ContentValues values = new ContentValues();
 
-        values.put("id", prescription.getId());
         values.put("sDate", prescription.getsDate());
         values.put("eDate", prescription.geteDate());
-        values.put("validity", prescription.getValidity());
+        values.put("validity", 1);
 
         return values;
     }
@@ -67,10 +66,10 @@ public class ModelConverter {
 
         ContentValues values = new ContentValues();
 
-        values.put("prescriptionId", sale.getPrescription().getId());
-        values.put("patienId", sale.getPatient().getTc());
-        values.put("relativeId", sale.getRelative().getTc());
-        values.put("date", sale.getDate());
+        values.put("salePrescriptionId", sale.getPrescription().getId());
+        values.put("salePatientTC", sale.getPatient().getTc());
+        values.put("saleRelativeTC", sale.getRelative().getTc());
+        values.put("saleDate", sale.getDate());
 
         return values;
     }

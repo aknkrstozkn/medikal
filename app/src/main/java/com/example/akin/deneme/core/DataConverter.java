@@ -44,7 +44,7 @@ public class DataConverter {
         sale.setPatient(patient);
         sale.setRelative(relative);
         sale.setPrescription(prescription);
-        sale.setDate(cursor.getLong(cursor.getColumnIndex("date")));
+        sale.setDate(cursor.getLong(cursor.getColumnIndex("saleDate")));
 
         return sale;
     }

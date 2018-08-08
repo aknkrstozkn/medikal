@@ -17,13 +17,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.AddSaleActivity" />
-        <activity android:name=".ui.SaleDetailActivity"
-            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".ui.SaleDetailActivity" />
         <activity
             android:name=".ui.PatientDetailActivity"
             android:label="@string/title_activity_patient_detail"
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.PrescriptionListActivity"></activity>
+        <activity android:name=".ui.OutOfDatePresActivity"></activity>
 
     </application>
 
