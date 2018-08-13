@@ -9,9 +9,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.example.akin.deneme.R;
 import com.example.akin.deneme.core.DataBase;
@@ -30,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class AddSaleActivity extends AppCompatActivity {
 
@@ -48,7 +52,9 @@ public class AddSaleActivity extends AppCompatActivity {
     private Context context = this;
     private Calendar caledar;
     private Button buttonSetStartDate, buttonSetEndDate;
-    private FloatingActionButton buttonMakeSale;
+    private FloatingActionButton buttonMakeSale, buttonAddProduct, buttonRemoveProduct;
+    private CheckBox checkPatientCordinate, checkRelativeCordinate, checkPatientRelative;
+    private ListView listProductAmount;
     private int day, mounth, year;
 
     @Override
@@ -56,19 +62,35 @@ public class AddSaleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale_detail);
 
+        productAmounts = new ArrayList<>();
+        listProductAmount = findViewById(R.id.listProductAmount);
+        eLayoutRelative = findViewById(R.id.eLayoutRelative);
+
         caledar = Calendar.getInstance();
         year = caledar.get(Calendar.YEAR);
         mounth = caledar.get(Calendar.MONTH);
         day = caledar.get(Calendar.DAY_OF_MONTH);
 
         db = new DataBase(this);
-        relative = new Relative();
-        relativities = new ArrayList<>();
-        patient = new Patient();
-        product = new Product();
-        productAmounts = new ArrayList<>();
-        prescription = new Prescription();
-        sale = new Sale();
+
+
+        final Button buttonSetRelative = findViewById(R.id.buttonSetRelative);
+        checkPatientRelative = findViewById(R.id.checkPatientRelative);
+        checkPatientRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(!checkPatientRelative.isChecked()){
+                    eLayoutRelative.setVisibility(View.VISIBLE);
+                    buttonSetRelative.setVisibility(View.VISIBLE);
+                }else{
+                    eLayoutRelative.setVisibility(View.INVISIBLE);
+                    buttonSetRelative.setVisibility(View.INVISIBLE);
+                }
+
+            }
+        });
+
 
         buttonSetEndDate = findViewById(R.id.editEndDate);
         buttonSetEndDate.setOnClickListener(new View.OnClickListener() {
@@ -112,24 +134,69 @@ public class AddSaleActivity extends AppCompatActivity {
             }
         });
 
+        buttonAddProduct = findViewById(R.id.floatingButtonAddProduct);
+        buttonAddProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productAmounts.add(getProductAmount(getProduct()));
+                ArrayList<String> stringList = new ArrayList<>();
+                for (ProductAmount productAmount : productAmounts) {
+                    stringList.add(productAmount.getProductAmount() + " tane " + productAmount.getProduct().getType());
+                }
+
+                String[] myStringArray = stringList.toArray(new String[stringList.size()]);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                        android.R.layout.simple_list_item_1, myStringArray);
+                listProductAmount.setAdapter(adapter);
+
+            }
+        });
+
+        buttonRemoveProduct = findViewById(R.id.floatingButtonRemoveProduct);
+        buttonRemoveProduct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productAmounts.remove(productAmounts.size() - 1);
+                ArrayList<String> stringList = new ArrayList<>();
+                for (ProductAmount productAmount : productAmounts) {
+                    stringList.add(productAmount.getProductAmount() + " tane " + productAmount.getProduct().getType());
+                }
+
+                String[] myStringArray = stringList.toArray(new String[stringList.size()]);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
+                        android.R.layout.simple_list_item_1, myStringArray);
+                listProductAmount.setAdapter(adapter);
+
+            }
+        });
+
         buttonMakeSale = findViewById(R.id.floatingButtonMakeSale);
         buttonMakeSale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                relative = getRelative();
-                relativities = getRelativities(relative);
-                patient = getPatient(relativities);
-                product = getProduct();
-                productAmounts = getProductAmounts(product);
-                prescription = getPrescription(productAmounts);
-                sale = getSale(prescription,patient,relative);
+                if(checkPatientRelative.isChecked()){
+
+                    relativities = new ArrayList<>();
+                    patient = getPatient(relativities);
+                    product = getProduct();
+                    prescription = getPrescription(productAmounts);
+                    sale = getSale(prescription, patient);
+
+                }else{
+                    relative = getRelative();
+                    relativities = getRelativities(relative);
+                    patient = getPatient(relativities);
+                    product = getProduct();
+                    prescription = getPrescription(productAmounts);
+                    sale = getSale(prescription, patient, relative);
+                }
+
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Dikkat!");
                 builder.setMessage("Bilgiler kaydedilecektir, emin misiniz?");
-                builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener(){
+                builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
 
 
                     }
@@ -147,10 +214,6 @@ public class AddSaleActivity extends AppCompatActivity {
                 builder.show();
             }
         });
-
-
-
-
 
 
     }
@@ -218,23 +281,28 @@ public class AddSaleActivity extends AppCompatActivity {
     private Product getProduct() {
 
         Product product = new Product();
+
         EditText editProductName = findViewById(R.id.editProductName);
+        EditText editProductSerialNumber = findViewById(R.id.editProductSerialNumber);
+        EditText editProductBarcode = findViewById(R.id.editProductBarCode);
+
         product.setType(editProductName.getText().toString());
+        product.setBarCode(editProductBarcode.getText().toString());
+        product.setSerialNumber(editProductSerialNumber.getText().toString());
 
         return product;
     }
 
-    private List<ProductAmount> getProductAmounts(Product product) {
+    private ProductAmount getProductAmount(Product product) {
 
-        List<ProductAmount> productAmounts = new ArrayList<>();
         ProductAmount productAmount = new ProductAmount();
         EditText editProductAmount = findViewById(R.id.editProductAmount);
 
         productAmount.setProduct(product);
         productAmount.setProductAmount(Integer.parseInt(editProductAmount.getText().toString()));
-        productAmounts.add(productAmount);
 
-        return productAmounts;
+
+        return productAmount;
     }
 
     private Prescription getPrescription(List<ProductAmount> productAmounts) {
@@ -260,7 +328,7 @@ public class AddSaleActivity extends AppCompatActivity {
         return prescription;
     }
 
-    private Sale getSale(Prescription prescription, Patient patient, Relative relative){
+    private Sale getSale(Prescription prescription, Patient patient, Relative relative) {
 
         Sale sale = new Sale();
 
@@ -270,5 +338,8 @@ public class AddSaleActivity extends AppCompatActivity {
         sale.setRelative(relative);
 
         return sale;
+    }
+    private Sale getSale(Prescription prescription, Patient patient){
+        return getSale(prescription, patient, null);
     }
 }
