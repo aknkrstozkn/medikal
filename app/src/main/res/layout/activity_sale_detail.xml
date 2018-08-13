@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <Button
         android:id="@+id/buttonSetPatient"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="24dp"
         android:background="@color/colorPrimaryDark"
         android:drawableRight="@android:drawable/arrow_down_float"
         android:onClick="buttonPatient"
@@ -72,21 +76,22 @@
                 android:paddingStart="10dp"
                 android:scrollbars="vertical" />
 
-            <RadioButton
-                android:id="@+id/radioPatientCordinate"
+            <CheckBox
+                android:id="@+id/checkPatientCordinate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editPatientAddress"
                 android:layout_marginTop="10dp"
                 android:text="Konumu Kaydet" />
 
-            <RadioButton
+            <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editPatientAddress"
+                android:id="@+id/checkPatientRelative"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_toEndOf="@id/radioPatientCordinate"
+                android:layout_toEndOf="@id/checkPatientCordinate"
                 android:text="Hasta Yakını Yok" />
 
         </RelativeLayout>
@@ -96,10 +101,11 @@
 
     <Button
         android:id="@+id/buttonSetRelative"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/eLayoutPatient"
         android:background="#ffffff"
+        android:paddingStart="24dp"
         android:drawableRight="@android:drawable/arrow_down_float"
         android:onClick="buttonRelative"
         android:paddingRight="10dp"
@@ -164,7 +170,7 @@
                 android:scrollbars="vertical" />
 
             <CheckBox
-                android:id="@+id/radioRelativeCordinate"
+                android:id="@+id/checkRelativeCordinate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editRelativeAddress"
@@ -179,7 +185,7 @@
                 android:layout_below="@id/editRelativeAddress"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/radioRelativeCordinate"
+                android:layout_toEndOf="@id/checkRelativeCordinate"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textSize="16dp"
@@ -191,12 +197,13 @@
 
     <Button
         android:id="@+id/buttonSetPrescription"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/eLayoutRelative"
         android:background="@color/colorPrimaryDark"
         android:drawableRight="@android:drawable/arrow_down_float"
         android:onClick="buttonPrescription"
+        android:paddingStart="24dp"
         android:paddingRight="10dp"
         android:text="Reçete Bilgileri"
         android:textColor="#fff" />
@@ -210,19 +217,27 @@
         android:orientation="vertical"
         android:padding="16dp"
         app:ael_duration="400"
-        app:ael_expanded="true"
+        app:ael_expanded="false"
         app:ael_interpolator="bounce">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="106dp"
+                android:id="@+id/viewSplitter"
+                android:layout_centerHorizontal="true"/>
+
             <Button
                 android:id="@+id/editStartDate"
                 android:layout_width="match_parent"
+                android:layout_alignParentStart="true"
                 android:layout_height="48dp"
                 android:hint="Başlangıç Günü"
                 android:textStyle="bold"
+                android:layout_toStartOf="@id/viewSplitter"
                 android:gravity="center"
                 android:background="#ffffff"
                 android:textColor="@color/colorPrimaryDark"
@@ -230,17 +245,43 @@
 
             <Button
                 android:id="@+id/editEndDate"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:hint="Bitiş Günü"
+                android:layout_toEndOf="@id/viewSplitter"
                 android:background="#ffffff"
+                android:layout_alignParentEnd="true"
                 android:textAlignment="gravity"
-                android:layout_below="@id/editStartDate"
-                android:layout_marginTop="10dp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textColor="@color/colorPrimaryDark"
                 android:inputType="date"/>
+
+            <EditText
+                android:id="@+id/editProductBarCode"
+                android:layout_below="@id/editStartDate"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentStart="true"
+                android:textAlignment="gravity"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:hint="Ürün Barkodu"
+                android:layout_toStartOf="@id/viewSplitter"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp" />
+
+            <EditText
+                android:id="@+id/editProductSerialNumber"
+                android:layout_below="@id/editStartDate"
+                android:layout_marginTop="10dp"
+                android:textAlignment="gravity"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:hint="Ürün Seri No"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/viewSplitter"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp" />
 
             <EditText
                 android:id="@+id/editProductName"
@@ -248,7 +289,7 @@
                 android:layout_height="48dp"
                 android:layout_alignParentStart="true"
                 android:hint="Ürün Adı"
-                android:layout_below="@id/editEndDate"
+                android:layout_below="@id/editProductBarCode"
                 android:layout_marginTop="10dp"/>
 
             <EditText
@@ -256,7 +297,7 @@
                 android:layout_width="72dp"
                 android:layout_height="48dp"
                 android:hint="Adedi"
-                android:layout_below="@id/editEndDate"
+                android:layout_below="@id/editProductSerialNumber"
                 android:layout_toEndOf="@id/editProductName"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
@@ -266,11 +307,11 @@
                 app:backgroundTint="@color/colorPrimaryDark"
                 android:scaleType="center"
                 app:fabCustomSize="32dp"
-                android:id="@+id/buttonAddProduct"
+                android:id="@+id/floatingButtonAddProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src= "@drawable/ic_add_black_32dp"
-                android:layout_below="@id/editEndDate"
+                android:layout_below="@id/editProductSerialNumber"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="15dp"/>
@@ -278,7 +319,7 @@
             <ListView
                 android:id="@+id/listProductAmount"
                 android:layout_width="260dp"
-                android:layout_height="100dp"
+                android:layout_height="84dp"
                 android:layout_below="@id/editProductName"
                 android:layout_marginTop="10dp"
                 android:autofillHints="List"
@@ -289,11 +330,11 @@
                 app:backgroundTint="@color/colorPrimaryDark"
                 android:scaleType="center"
                 app:fabCustomSize="32dp"
-                android:id="@+id/buttonRemoveProduct"
+                android:id="@+id/floatingButtonRemoveProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src= "@drawable/ic_remove_black_32dp"
-                android:layout_below="@id/buttonAddProduct"
+                android:layout_below="@id/floatingButtonAddProduct"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="25dp"/>
@@ -301,14 +342,16 @@
     </com.github.aakira.expandablelayout.ExpandableLinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        app:fabSize="normal"
-        app:backgroundTint="@color/colorPrimaryDark"
-        android:scaleType="center"
         android:id="@+id/floatingButtonMakeSale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src= "@drawable/ic_add_circle_black_64dp"
+        android:layout_centerHorizontal="true"
+        android:scaleType="center"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/eLayoutPrescription"
-        android:layout_marginStart="180dp"/>
+        android:src="@drawable/ic_add_circle_black_64dp"
+        app:backgroundTint="@color/colorPrimaryDark"
+        app:fabSize="normal" />
 
 </RelativeLayout>
+</ScrollView>
