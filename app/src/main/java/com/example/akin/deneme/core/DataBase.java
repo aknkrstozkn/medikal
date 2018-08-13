@@ -1,6 +1,5 @@
 package com.example.akin.deneme.core;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +14,7 @@ import com.example.akin.deneme.core.model.Relative;
 import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,78 +83,60 @@ public class DataBase extends SQLiteOpenHelper {
         db.execSQL(createTableProduct);
 
         String createTablePrescription = "CREATE TABLE " + prescription + "("
-                + id + " LONG PRIMARY KEY,"
+                + id + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + sDate + " LONG,"
                 + eDate + " LONG,"
                 + validity + " INTEGER DEFAULT 1)";
         db.execSQL(createTablePrescription);
 
         String createTablePatientRelative = "CREATE TABLE " + patientRelative + "("
-                + patientTC + " TEXT REFERENCES "+ person + "(" + tc + ") ON UPDATE CASCADE ON DELETE CASCADE,"
-                + relativeTC + " TEXT REFERENCES "+ person + "(" + tc + ") ON UPDATE CASCADE ON DELETE CASCADE,"
+                + patientTC + " TEXT REFERENCES " + person + "(" + tc + ") ON UPDATE CASCADE ON DELETE CASCADE,"
+                + relativeTC + " TEXT REFERENCES " + person + "(" + tc + ") ON UPDATE CASCADE ON DELETE CASCADE,"
                 + relativity + " TEXT,"
                 + "PRIMARY KEY(" + patientTC + "," + relativeTC + "))";
         db.execSQL(createTablePatientRelative);
 
         String createTablePrescriptionProduct = "CREATE TABLE " + prescriptionProduct + "("
-                + prescriptionId + " LONG REFERENCES " + prescription + "(" + id + ") ON UPDATE CASCADE ON DELETE CASCADE,"
+                + prescriptionId + " INTEGER REFERENCES " + prescription + "(" + id + ") ON UPDATE CASCADE ON DELETE CASCADE,"
                 + productBarCode + " TEXT REFERENCES " + product + "(" + barCode + ") ON UPDATE CASCADE ON DELETE CASCADE,"
                 + productAmount + " INTEGER,"
                 + "PRIMARY KEY(" + prescriptionId + "," + productBarCode + "))";
         db.execSQL(createTablePrescriptionProduct);
 
         String createTableSale = "CREATE TABLE " + sale + "("
-                + salePrescriptionId + " LONG REFERENCES " + prescription + "(" + id + ") ON UPDATE CASCADE ON DELETE CASCADE,"
+                + salePrescriptionId + " INTEGER REFERENCES " + prescription + "(" + id + ") ON UPDATE CASCADE ON DELETE CASCADE,"
                 + salePatientTC + " TEXT REFERENCES " + person + "(" + tc + ") ON UPDATE CASCADE ON DELETE CASCADE,"
-                + saleRelativeTC + " TEXT REFERENCES " + person + "(" + tc +") ON UPDATE CASCADE ON DELETE CASCADE,"
+                + saleRelativeTC + " TEXT REFERENCES " + person + "(" + tc + ") ON UPDATE CASCADE ON DELETE CASCADE,"
                 + saleDate + " LONG,"
                 + "PRIMARY KEY(" + salePrescriptionId + "))";
         db.execSQL(createTableSale);
 
     }
 
-    public void deletePatient(String tc) {
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String selectQuery = "SELECT * FROM " + "sale" + " WHERE " + "patientTC" + "='" + tc + "'";
-            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                if (cursor.getCount() == 1) {
-                    db.delete("person", "tc = ?", new String[]{String.valueOf(tc)});
-                }
-            }
-        }
-    }
-
-    public void deleteRelative(String tc) {
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String selectQuery = "SELECT * FROM " + "sale" + " WHERE " + "relativeTC" + "=" + "'" + tc + "'";
-            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                if (cursor.getCount() == 1) {
-                    db.delete("person", "tc = ?", new String[]{String.valueOf(tc)});
-                }
-            }
-        }
-    }
-
     public void addPerson(Person person) {
 
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String selectQuery = "SELECT * FROM " + "person" + " WHERE " + "tc " + "= " + "'" + person.getTc() + "'";
-            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                if (cursor.getCount() == 0) {
-                    db.insert("person", null, modelConverter.person(person));
+            try (SQLiteDatabase db = this.getWritableDatabase()) {
+                String selectQuery = "SELECT * FROM " + this.person + " WHERE " + this.tc + " = " + "'" + person.getTc() + "'";
+                try (Cursor cursor = db.rawQuery(selectQuery, null)) {
+                    if (cursor.getCount() == 0) {
+                        db.insert(this.person, null, modelConverter.person(person));
 
+                    }
                 }
             }
-        }
 
     }
 
     public void addPatientRelative(String patientTC, Relativity relativity) {
+
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String selectQuery = "SELECT * FROM " + "patientRelative" + " WHERE " + "patientTC " + "= " + "'" + patientTC + "'" + " and relativeTC = " + "'" + relativity.getRelative().getTc() + "'";
+
+            String selectQuery = "SELECT * FROM " + patientRelative + " WHERE " + this.patientTC + " = " + "'" + patientTC + "'" +
+                    " and " + relativeTC + " = " + "'" + relativity.getRelative().getTc() + "'";
+
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.getCount() == 0) {
-                    db.insert("patientRelative", null, modelConverter.patientAndRelative(patientTC, relativity));
+                    db.insert(patientRelative, null, modelConverter.patientAndRelative(patientTC, relativity));
                 }
             }
         }
@@ -162,117 +144,94 @@ public class DataBase extends SQLiteOpenHelper {
 
     public void addProduct(Product product) {
         try (SQLiteDatabase writableDatabase = this.getWritableDatabase()) {
-            String selectQuery = "SELECT type FROM " + "product" + " WHERE " + "barCode" + "='" + product.getBarCode() + "'";
+            String selectQuery = "SELECT * FROM " + this.product + " WHERE " + barCode + " = '" + product.getBarCode() + "'";
             try (Cursor cursor = writableDatabase.rawQuery(selectQuery, null)) {
                 if (cursor.getCount() == 0) {
-                    writableDatabase.insert("product", null, modelConverter.product(product));
+                    writableDatabase.insert(this.product, null, modelConverter.product(product));
                 }
             }
-        }
-    }
-
-
-    public void deleteProduct(String barCode) {
-        try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String selectQuery = "SELECT * FROM " + "prescriptionProduct" + " WHERE " + "productBarCode" + "=" + "'" + barCode + "'";
-            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                if (cursor.getCount() == 1) {
-                    db.delete("product", "barCode = ?", new String[]{String.valueOf(barCode)});
-                }
-            }
-        }
-    }
-
-    public long addPrescription(Prescription prescription) {
-        try (SQLiteDatabase writableDatabase = this.getWritableDatabase();) {
-            return writableDatabase.insert("prescription", null, modelConverter.prescription(prescription));
         }
     }
 
     public void addPrescriptionProduct(long prescriptionId, ProductAmount productAmount) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.insert("prescriptionProduct", null, modelConverter.prescriptionProduct(prescriptionId, productAmount));
+            db.insert(this.prescriptionProduct, null, modelConverter.prescriptionProduct(prescriptionId, productAmount));
         }
     }
 
-    public String addSale(Sale sale) {
+    public long addPrescription(Prescription prescription) {
+        try (SQLiteDatabase writableDatabase = this.getWritableDatabase()) {
+            return writableDatabase.insert(this.prescription, null, modelConverter.prescription(prescription));
+        }
+    }
 
-        addPerson(sale.getPatient());
-        addPerson(sale.getPatient().getRelatives().get(0).getRelative());
-        addPatientRelative(sale.getPatient().getTc(), sale.getPatient().getRelatives().get(0));
+    public void addSale(Sale sale) {
+        if(sale.getPatient().getRelatives().isEmpty()){
+            addPerson(sale.getPatient());
+        }else{
+            addPerson(sale.getPatient());
+            addPerson(sale.getPatient().getRelatives().get(0).getRelative());
+            addPatientRelative(sale.getPatient().getTc(), sale.getPatient().getRelatives().get(0));
+        }
 
-        long prescriptionId = addPrescription(sale.getPrescription());
-        Prescription prescription = sale.getPrescription();
-        prescription.setId(prescriptionId);
-        sale.setPrescription(prescription);
+
+        sale.getPrescription().setId(addPrescription(sale.getPrescription()));
 
         for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
             addProduct(productAmount.getProduct());
             addPrescriptionProduct(sale.getPrescription().getId(), productAmount);
         }
-        try(SQLiteDatabase db = this.getWritableDatabase()) {
 
-            String id =String.valueOf(db.insert("sale",null,modelConverter.sale(sale)));
-            return String.valueOf(sale.getPrescription().getId()) + " + " + sale.getPatient().getTc() + " + "
-                    + sale.getRelative().getTc() + " + " + String.valueOf(sale.getDate()) + " + " + id;
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+
+            db.insert(this.sale, null, modelConverter.sale(sale));
         }
-
-
     }
 
-    public String get() {
-        String a = "";
+    public void deletePatient(String tc) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            String selectQueryPatient = "SELECT * FROM " + sale + " WHERE " + salePatientTC + " = '" + tc + "'";
+            String selectQueryRelative = "SELECT * FROM " + sale + " WHERE " + saleRelativeTC + " = '" + tc + "'";
+            try (Cursor cursorPatient = db.rawQuery(selectQueryPatient, null)) {
+                try (Cursor cursorRelative = db.rawQuery(selectQueryRelative, null)) {
 
-        String s = "SELECT * FROM person";
-        try (SQLiteDatabase r = this.getReadableDatabase()) {
-            try (Cursor c = r.rawQuery(s, null)) {
-                c.moveToFirst();
-                a += String.valueOf(c.getCount()) + "+";
+                    if (cursorPatient.getCount() == 1 && cursorRelative.getCount() == 0) {
+                        db.delete(person, this.tc + " = ?", new String[]{String.valueOf(tc)});
+                    }
+                }
             }
         }
+    }
 
-        s = "SELECT * FROM patientRelative";
-        try (SQLiteDatabase r = this.getReadableDatabase()) {
-            try (Cursor c = r.rawQuery(s, null)) {
-                c.moveToFirst();
-                a += String.valueOf(c.getCount()) + "+";
-            }
-        }
-        s = "SELECT * FROM product";
-        try (SQLiteDatabase r = this.getReadableDatabase()) {
-            try (Cursor c = r.rawQuery(s, null)) {
-                c.moveToFirst();
-                a += String.valueOf(c.getCount()) + "+";
-            }
-        }
-        s = "SELECT * FROM prescriptionProduct";
-        try (SQLiteDatabase r = this.getReadableDatabase()) {
-            try (Cursor c = r.rawQuery(s, null)) {
-                c.moveToFirst();
-                a += String.valueOf(c.getCount()) + "+";
-            }
-        }
-        s = "SELECT * FROM prescription";
-        try (SQLiteDatabase r = this.getReadableDatabase()) {
-            try (Cursor c = r.rawQuery(s, null)) {
-                c.moveToFirst();
-                a += String.valueOf(c.getCount()) + "+";
-            }
-        }
-        s = "SELECT * FROM sale";
-        try (SQLiteDatabase r = this.getReadableDatabase()) {
-            try (Cursor c = r.rawQuery(s, null)) {
-                c.moveToFirst();
-                a += String.valueOf(c.getCount()) + "+";
-            }
-        }
+    public void deleteRelative(String tc) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            String selectQueryPatient = "SELECT * FROM " + sale + " WHERE " + salePatientTC + " = '" + tc + "'";
+            String selectQueryRelative = "SELECT * FROM " + sale + " WHERE " + saleRelativeTC + " = '" + tc + "'";
+            try (Cursor cursorPatient = db.rawQuery(selectQueryPatient, null)) {
+                try (Cursor cursorRelative = db.rawQuery(selectQueryRelative, null)) {
 
-        return a;
+                    if (cursorRelative.getCount() == 1 && cursorPatient.getCount() == 0) {
+                        db.delete(person, this.tc + " = ?", new String[]{String.valueOf(tc)});
+                    }
+                }
+            }
+        }
+    }
+    public void deleteProduct(String barCode) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            String selectQuery = "SELECT * FROM " + prescriptionProduct + " WHERE " + productBarCode + " = " + "'" + barCode + "'";
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
+
+                if (cursor.getCount() == 1) {
+                    db.delete(this.product, this.barCode + " = ?", new String[]{String.valueOf(barCode)});
+                }
+            }
+        }
     }
 
     public void deletePrescription(long id) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.delete("prescription", "id", new String[]{String.valueOf(id)});
+            db.delete(this.prescription, this.id, new String[]{String.valueOf(id)});
         }
     }
 
@@ -280,71 +239,79 @@ public class DataBase extends SQLiteOpenHelper {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
             deletePatient(getSale(prescriptionId).getPatient().getTc());
             deleteRelative(getSale(prescriptionId).getRelative().getTc());
+
             for (ProductAmount productAmount : getSale(prescriptionId).getPrescription().getPrescriptionsProductList()) {
                 deleteProduct(productAmount.getProduct().getBarCode());
             }
+
             deletePrescription(getSale(prescriptionId).getPrescription().getId());
         }
     }
 
     public void updatePerson(String tc, Person person) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.update("person", modelConverter.person(person), "tc = ?",
+            db.update(this.person, modelConverter.person(person), this.tc + " = ?",
                     new String[]{tc});
         }
     }
 
     public void updateProduct(String barCode, Product product) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.update("product", modelConverter.product(product), "barCode = ?",
+            db.update(this.product, modelConverter.product(product), this.barCode + " = ?",
                     new String[]{barCode});
         }
     }
 
-    public void updatePrescription(long id, Prescription prescription) {
+    public void updatePrescription(Prescription prescription) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.update("prescription", modelConverter.prescription(prescription), "id = ?",
-                    new String[]{String.valueOf(id)});
+            db.update(this.prescription, modelConverter.prescription(prescription), this.id + " = ?",
+                    new String[]{String.valueOf(prescription.getId())});
         }
     }
 
-    public void updateSale(long prescriptionId, Sale sale) {
+    public void updateSale(Sale sale) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.update("sale", modelConverter.sale(sale), "prescriptionId = ?",
-                    new String[]{String.valueOf(prescriptionId)});
+            db.update(this.sale, modelConverter.sale(sale), this.salePrescriptionId + " = ?",
+                    new String[]{String.valueOf(sale.getPrescription().getId())});
         }
     }
 
     public void updatePrescriptionProduct(long prescriptionId, String productBarCode, ProductAmount productAmount) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.update("prescriptionProduct", modelConverter.prescriptionProduct(prescriptionId, productAmount), "prescriptionId = ? and productBarCode = ?",
+            db.update(this.prescriptionProduct, modelConverter.prescriptionProduct(prescriptionId, productAmount),
+                    this.prescriptionId + " = ? and " + this.productBarCode + " = ?",
                     new String[]{String.valueOf(prescriptionId), productBarCode});
         }
     }
 
     public void updatePatientRelative(String relativeTC, String patientTC, Relativity relativity) {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            db.update("patientRelative", modelConverter.patientAndRelative(patientTC, relativity), "patientTC = ? and relativeTC = ?",
+            db.update(this.patientRelative, modelConverter.patientAndRelative(patientTC, relativity),
+                    this.patientTC + " = ? and " + this.relativeTC + " = ?",
                     new String[]{patientTC, relativeTC});
         }
     }
 
     public Product getProduct(String barCode) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT * FROM " + product + " WHERE " + this.barCode + "=" + "'" + barCode + "'";
+            String selectQuery = "SELECT * FROM " + product + " WHERE " + this.barCode + " = " + "'" + barCode + "'";
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                cursor.moveToFirst();
-                return dataConverter.product(cursor);
+                if (cursor.moveToFirst())
+                    return dataConverter.product(cursor);
+                else
+                    return null;
             }
         }
     }
 
     public Relative getRelative(String tc) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT * FROM person WHERE tc = " + "'" + tc + "'";
+            String selectQuery = "SELECT * FROM " + person + " WHERE " + this.tc + " = " + "'" + tc + "'";
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                cursor.moveToFirst();
-                return dataConverter.relative(cursor);
+                if (cursor.moveToFirst())
+                    return dataConverter.relative(cursor);
+                else
+                    return null;
             }
         }
     }
@@ -352,24 +319,33 @@ public class DataBase extends SQLiteOpenHelper {
     public List<Relativity> getRelativities(String tc) {
         List<Relativity> relativities = new ArrayList<>();
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String relativityQuery = "SELECT relativeTC, relativity FROM patientRelative WHERE patientTC = " + "'" + tc + "'";
+            String relativityQuery = "SELECT " + relativeTC + "," + relativity + " FROM " + patientRelative +
+                    " WHERE " + patientTC + " = " + "'" + tc + "'";
             try (Cursor cursor = db.rawQuery(relativityQuery, null)) {
                 if (cursor.moveToFirst()) {
                     do {
-                        relativities.add(dataConverter.relativity(cursor, getRelative(cursor.getString(cursor.getColumnIndex("relativeTC")))));
+                        Relative relative = getRelative(
+                                cursor.getString(cursor.getColumnIndex("relativeTC")
+                                ));
+
+                        relativities.add(dataConverter.relativity(cursor, relative));
                     } while (cursor.moveToNext());
-                }
+                    return relativities;
+                } else
+                    return null;
             }
         }
-        return relativities;
+
     }
 
     public Patient getPatient(String tc) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT * FROM person WHERE tc = " + "'" + tc + "'";
+            String selectQuery = "SELECT * FROM " + person + " WHERE " + this.tc + " = " + "'" + tc + "'";
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                cursor.moveToFirst();
-                return dataConverter.patient(cursor, getRelativities(tc));
+                if (cursor.moveToFirst())
+                    return dataConverter.patient(cursor, getRelativities(tc));
+                else
+                    return null;
             }
         }
     }
@@ -378,79 +354,64 @@ public class DataBase extends SQLiteOpenHelper {
         List<Patient> patients = new ArrayList<>();
 
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT * FROM person";
+            String selectQuery = "SELECT " + tc + "," + name + "," + address + "," + cordinate + "," + phoneNumber
+            + " FROM " + person + " JOIN " + patientRelative + " ON " + tc + " = " + patientTC;
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.moveToFirst()) {
+
                     do {
                         patients.add(getPatient(cursor.getString(cursor.getColumnIndex("tc"))));
                     } while (cursor.moveToNext());
-                }
+
+                    return patients;
+                } else
+                    return null;
             }
         }
-        return patients;
+
     }
 
     public List<ProductAmount> getProductAmounts(long prescriptionId) {
         List<ProductAmount> productAmounts = new ArrayList<>();
+
         try (SQLiteDatabase db = this.getReadableDatabase()) {
             String selectQuery = "SELECT * FROM " + prescriptionProduct + " WHERE " + this.prescriptionId + " = " + prescriptionId;
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.moveToFirst()) {
+
                     do {
                         productAmounts.add(dataConverter.productAmount(cursor, getProduct(cursor.getString(cursor.getColumnIndex(productBarCode)))));
                     } while (cursor.moveToNext());
-                }
+
+                    return productAmounts;
+                } else
+                    return null;
             }
         }
-        return productAmounts;
     }
 
     public Prescription getPrescription(long id) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
             String selectQuery = "SELECT * FROM " + prescription + " WHERE " + this.id + " = " + id;
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                cursor.moveToFirst();
-                return dataConverter.prescription(cursor, getProductAmounts(id));
+                if (cursor.moveToFirst())
+                    return dataConverter.prescription(cursor, getProductAmounts(id));
+                else
+                    return null;
             }
         }
-    }
-
-    public String getId (){
-        String a = "";
-        long id = 1;
-        try(SQLiteDatabase readableDatabase = this.getReadableDatabase()){
-            String selectQuery = "SELECT "+sDate+" FROM " + prescription;
-            try (Cursor cursor = readableDatabase.rawQuery(selectQuery,null)){
-                if(cursor.moveToFirst()){
-                    do {
-                        a += cursor.getLong(0);
-                    }while (cursor.moveToNext());
-
-                }
-            }
-        }
-        try(SQLiteDatabase readableDatabase = this.getReadableDatabase()){
-            String selectQuery = "SELECT * FROM " + sale + " WHERE "+ salePrescriptionId + "=" + id;
-            try (Cursor cursor = readableDatabase.rawQuery(selectQuery,null)){
-                if(cursor.moveToFirst()){
-                    do {
-                        a += cursor.getLong(cursor.getColumnIndex(salePrescriptionId)) + " + ";
-                    }while (cursor.moveToNext());
-
-                }
-            }
-        }
-        return a;
     }
 
     public Sale getSale(long prescriptionId) {
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT * FROM " + sale + " WHERE = " + salePrescriptionId + "= " + prescriptionId;
+            String selectQuery = "SELECT * FROM " + sale + " WHERE " + salePrescriptionId + " = " + prescriptionId;
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
-                cursor.moveToFirst();
-                return dataConverter.sale(cursor, getPrescription(prescriptionId),
-                        getPatient(cursor.getString(cursor.getColumnIndex("patientTC"))),
-                        getRelative(cursor.getString(cursor.getColumnIndex("relativeTC"))));
+                if (cursor.moveToFirst())
+                    return dataConverter.sale(cursor, getPrescription(prescriptionId),
+                            getPatient(cursor.getString(cursor.getColumnIndex("salePatientTC"))),
+                            getRelative(cursor.getString(cursor.getColumnIndex("saleRelativeTC"))));
+                else
+                    return null;
             }
         }
     }
@@ -459,49 +420,61 @@ public class DataBase extends SQLiteOpenHelper {
         List<Sale> sales = new ArrayList<>();
 
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT * FROM " + sale;
-            // String selectQuery = "SELECT s.prescriptionId,s.patientTC,s.relativeTC,s.date FROM sale AS s,prescription as p WHERE s.prescriptionId = p.id ORDER BY p.eDate ASC";
+
+            String selectQuery = "SELECT " + salePrescriptionId + "," + salePatientTC +
+                    "," + saleRelativeTC + "," + saleDate + " FROM " + sale + "," + prescription +
+                    " WHERE " + salePrescriptionId + " = " + id + " ORDER BY " + eDate + " ASC";
+
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.moveToFirst()) {
+
                     do {
                         sales.add(dataConverter.sale(cursor,
                                 getPrescription(cursor.getLong(cursor.getColumnIndex(salePrescriptionId))),
                                 getPatient(cursor.getString(cursor.getColumnIndex(salePatientTC))),
                                 getRelative(cursor.getString(cursor.getColumnIndex(saleRelativeTC)))));
                     } while (cursor.moveToNext());
-                }
+
+                    return sales;
+                } else
+                    return null;
             }
         }
-        return sales;
+
     }
 
     public List<Sale> getOutOfDatePresSales() {
         List<Sale> sales = new ArrayList<>();
 
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT id FROM prescription AS p, sale AS s WHERE p.validity = 1 and s.prescriptionId = p.id ORDER BY eDate ASC";
+            String selectQuery = "SELECT " + id +  " FROM " + prescription + "," + sale +
+                    " WHERE " + validity + " = 1 and " + salePrescriptionId + " = " + id +
+                    " ORDER BY " + eDate + " ASC";
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.moveToFirst()) {
                     do {
                         long pTime = getPrescription(cursor.getLong(0)).geteDate();
                         Date date = new Date(pTime);
-                        Calendar calendar = Calendar.getInstance();
-
-                        if (date.before(calendar.getTime())) {
-                            sales.add(getSale(cursor.getLong(0)));
+                        Date currentDate = Calendar.getInstance().getTime();
+                        if (date.before(currentDate)) {
+                            sales.add(getSale((long) cursor.getInt(cursor.getColumnIndex(id))));
                         }
                     } while (cursor.moveToNext());
-                }
+                    return sales;
+                } else
+                    return null;
             }
         }
-        return sales;
     }
 
     public List<Sale> getInDatePresSales() {
         List<Sale> sales = new ArrayList<>();
 
         try (SQLiteDatabase db = this.getReadableDatabase()) {
-            String selectQuery = "SELECT id FROM prescription AS p, sale AS s WHERE p.validity = 1 and s.prescriptionId = p.id ORDER BY eDate ASC";
+
+            String selectQuery = "SELECT " + id + " FROM " + prescription + "," + sale +
+                    " WHERE " + validity + " = 1 and " + salePrescriptionId + " = " + id +
+                    " ORDER BY " + eDate + " ASC";
             try (Cursor cursor = db.rawQuery(selectQuery, null)) {
                 if (cursor.moveToFirst()) {
                     do {
@@ -512,11 +485,13 @@ public class DataBase extends SQLiteOpenHelper {
                         if (date.after(calendar.getTime())) {
                             sales.add(getSale(cursor.getLong(0)));
                         }
+
                     } while (cursor.moveToNext());
-                }
+                    return sales;
+                } else
+                    return null;
             }
         }
-        return sales;
     }
 
     @Override
