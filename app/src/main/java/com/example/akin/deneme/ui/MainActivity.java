@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -24,14 +25,22 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     DataBase db;
-    public List<Sale> satislar = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        db = new DataBase(getApplicationContext());
+        db = new DataBase(this);
 
         Button butOutOfDatePres = findViewById(R.id.buttonOutOfDatePres);
+        List<Sale> outOfDateSales = db.getOutOfDatePresSales();
+
+        if(outOfDateSales == null){
+            butOutOfDatePres.setClickable(false);
+            butOutOfDatePres.setText("GÜNÜ GEÇMİŞ REÇETELER (" + 0 + ")");
+        }else{
+            butOutOfDatePres.setText("GÜNÜ GEÇMİŞ REÇETELER (" + outOfDateSales.size() + ")");
+        }
         butOutOfDatePres.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,7 +59,24 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button buttonValid = findViewById(R.id.buttonValidPres);
+        List<Sale> validSales = db.getInDatePresSales();
+
+        if(validSales == null){
+            buttonValid.setClickable(false);
+            buttonValid.setText("REÇETELER (" + 0 + ")");
+        }else{
+            buttonValid.setText("REÇETELER (" + validSales.size() + ")");
+        }
         buttonValid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PrescriptionListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        FloatingActionButton buttonAddSale = findViewById(R.id.floatingButtonAddSale);
+        buttonAddSale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddSaleActivity.class);
@@ -58,87 +84,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Relative relative;
-        List<Relativity> relativities;
-        Patient patient;
-        Product product;
-        List<ProductAmount> productAmounts;
-        Prescription prescription;
-        Sale sale;
-        relative = new Relative();
-        relativities = new ArrayList<>();
-        patient = new Patient();
-        product = new Product();
-        productAmounts = new ArrayList<>();
-        prescription = new Prescription();
-        sale = new Sale();
-
-        relative.setName("Akın Kürşat Özkan");
-        relative.setTc("16192221284");
-        relative.setAddress("Kötekli Mahallesi");
-        relative.setPhoneNumber("05458521996");
-        relative.setCordinate("dasdas");
-
-        Relativity relativity = new Relativity();
-        relativity.setRelative(relative);
-        relativity.setRelativity("Oğlu");
-
-        relativities.add(relativity);
-
-        patient.setName("ORHAN ÖZKAN");
-        patient.setTc("16195221066");
-        patient.setAddress("Müminli Mahallesi");
-        patient.setPhoneNumber("05323036820");
-        patient.setRelatives(relativities);
-        patient.setCordinate("asdasd");
-
-        product.setType("Bez");
-        product.setSerialNumber("asdasd");
-        product.setBarCode("asdasds");
-
-        ProductAmount productAmount = new ProductAmount();
-        productAmount.setProduct(product);
-        productAmount.setProductAmount(150);
-
-        productAmounts.add(productAmount);
-
-        Calendar calendar = Calendar.getInstance();
-
-        prescription.seteDate(calendar.getTimeInMillis());
-        prescription.setsDate(calendar.getTimeInMillis());
-        prescription.setPrescriptionsProductList(productAmounts);
-
-        sale.setRelative(relative);
-        sale.setPatient(patient);
-        sale.setDate(calendar.getTimeInMillis());
-        sale.setPrescription(prescription);
-
-        satislar.add(sale);
-        db.addSale(sale);
 
 
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Dikkat!");
-        builder.setMessage(db.getId());
-        builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int id) {
-
-
-
-            }
-        });
-
-
-        builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-
-            }
-        });
-
-
-        builder.show();
     }
 
 
