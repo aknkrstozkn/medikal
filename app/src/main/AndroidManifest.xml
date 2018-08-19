@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,20 +18,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.AddSaleActivity"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ui.SaleDetailActivity"
-            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".ui.AddSaleActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.SaleDetailActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.PatientDetailActivity"
             android:label="@string/title_activity_patient_detail"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".ui.PrescriptionListActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
-        <activity android:name=".ui.OutOfDatePresActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
-
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.PrescriptionListActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.OutOfDatePresActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.SalesList"></activity>
     </application>
 
 </manifest>

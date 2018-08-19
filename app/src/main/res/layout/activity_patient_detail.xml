@@ -15,6 +15,7 @@
         android:gravity="center"
         android:text="TC : 16192221284"
         android:textStyle="bold"
+        android:inputType="number"
         app:layout_constraintTop_toTopOf="parent" />"
 
         android:id="@+id/textViewPatientName"
@@ -35,6 +36,7 @@
         android:layout_height="48dp"
         android:gravity="center"
         android:text="Tel: 05458529996"
+        android:inputType="phone"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textViewPatientTC"/>
 
