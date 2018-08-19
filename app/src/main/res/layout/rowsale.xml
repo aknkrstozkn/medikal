@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <RelativeLayout
+        android:id="@+id/buttonSale"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textViewSaleDate"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:lines="2"
+            android:layout_alignParentStart="true"
+            android:text="12:30
+08/12/2018"
+            android:textAlignment="gravity"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dp"/>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:layout_toEndOf="@id/textViewSaleDate"/>
+
+        <TextView
+            android:id="@+id/textViewSalePatientName"
+            android:layout_width="144dp"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/textViewSaleDate"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:text="AKIN KÜRŞAT ÖZKAN"
+            android:layout_marginStart="5dp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:layout_toEndOf="@id/textViewSalePatientName"/>
+
+        <TextView
+            android:id="@+id/textViewProductTypes"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_toEndOf="@id/textViewSalePatientName"
+            android:layout_alignParentEnd="true"
+            android:textAlignment="center"
+            android:text="bez, sonda, falan filan"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimaryDark"
+            android:layout_alignParentBottom="true"/>
+
+
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
