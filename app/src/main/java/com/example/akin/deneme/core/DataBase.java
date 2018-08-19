@@ -350,6 +350,18 @@ public class DataBase extends SQLiteOpenHelper {
         }
     }
 
+    public Patient getPatientWithName(String name) {
+        try (SQLiteDatabase db = this.getReadableDatabase()) {
+            String selectQuery = "SELECT * FROM " + person + " WHERE " + this.name + " = " + "'" + name + "'";
+            try (Cursor cursor = db.rawQuery(selectQuery, null)) {
+                if (cursor.moveToFirst())
+                    return dataConverter.patient(cursor, getRelativities(cursor.getString(cursor.getColumnIndex(tc))));
+                else
+                    return null;
+            }
+        }
+    }
+
     public List<Patient> getPatients() {
         List<Patient> patients = new ArrayList<>();
 
