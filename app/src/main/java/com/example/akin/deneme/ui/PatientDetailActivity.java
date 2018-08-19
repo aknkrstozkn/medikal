@@ -1,5 +1,7 @@
 package com.example.akin.deneme.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ public class PatientDetailActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DataBase db;
+    private Context context;
 
 
     @Override
@@ -31,36 +34,14 @@ public class PatientDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_detail);
         db = new DataBase(this);
+        context = this;
 
         //Adding some objects to test
 
-        Product product = new Product();
-        product.setType("Bez");
+        Intent intent = getIntent();
 
-        Patient patient = new Patient();
-        patient.setName("AKIN KURSAT OZKAN");
-        patient.setTc("16192221284");
-        patient.setAddress("Kötekli Mahallesi 265. Sokak Fatma Altaş Apt. Kat 1 Daire 7");
-        patient.setPhoneNumber("05458529996");
-
-        List<Relativity> relativities = new ArrayList<>();
-
-        for (int i = 0; i < 10; i++){
-
-            Relative relative = new Relative();
-            relative.setName("ORHAN ÖZKAN");
-            relative.setTc("16195221066");
-            relative.setAddress("Müminli Mahallesi Toki Konutlaru No 6 ADANA/SARIÇAM");
-            relative.setPhoneNumber("05323036820");
-
-            Relativity relativity = new Relativity();
-            relativity.setRelative(relative);
-            relativity.setRelativity("Babası");
-
-            relativities.add(relativity);
-        }
-
-        patient.setRelatives(relativities);
+        String id = intent.getStringExtra("tc");
+        Patient patient = db.getPatient(id);
 
         TextView textViewPatientName = findViewById(R.id.textViewPatientName);
         textViewPatientName.setText(patient.getName());
@@ -81,7 +62,7 @@ public class PatientDetailActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new MyAdapter(patient);
+        mAdapter = new MyAdapter(patient, context);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

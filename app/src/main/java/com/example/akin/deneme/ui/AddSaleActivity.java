@@ -37,9 +37,6 @@ import java.util.TimeZone;
 
 public class AddSaleActivity extends AppCompatActivity {
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private DataBase db;
     private ExpandableLinearLayout eLayoutPatient, eLayoutRelative, eLayoutPrescription;
     private Relative relative;
@@ -196,20 +193,14 @@ public class AddSaleActivity extends AppCompatActivity {
                 builder.setTitle("Dikkat!");
                 builder.setMessage("Bilgiler kaydedilecektir, emin misiniz?");
                 builder.setNegativeButton("Hayır", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-
-
-                    }
+                    public void onClick(DialogInterface dialog, int id) {}
                 });
-
-
                 builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                         db.addSale(sale);
                     }
                 });
-
 
                 builder.show();
             }
@@ -245,7 +236,7 @@ public class AddSaleActivity extends AppCompatActivity {
         patient.setPhoneNumber(editPatientPhone.getText().toString());
         patient.setAddress(editPatientAddress.getText().toString());
         patient.setTc(editPatientTC.getText().toString());
-        patient.setName(editPatientName.getText().toString());
+        patient.setName(editPatientName.getText().toString().toUpperCase());
 
         return patient;
     }
@@ -260,7 +251,7 @@ public class AddSaleActivity extends AppCompatActivity {
 
         relative.setAddress(editRelativeAddress.getText().toString());
         relative.setTc(editRelativeTC.getText().toString());
-        relative.setName(editRelativeName.getText().toString());
+        relative.setName(editRelativeName.getText().toString().toUpperCase());
         relative.setPhoneNumber(editRelativePhone.getText().toString());
 
         return relative;
