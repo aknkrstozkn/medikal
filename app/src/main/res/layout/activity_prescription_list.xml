@@ -6,65 +6,61 @@
     android:layout_height="match_parent"
     android:background="#ffffff">
 
-    <SearchView
-        android:id="@+id/searchViewTCOne"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarPrescription"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusable="false"
-        android:iconifiedByDefault="false"
-        android:queryHint="TC"
-        android:textColor="@color/colorPrimaryDark" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleTextColor="#ffffff" />
+
+
 
     <View
         android:id="@+id/upperLine"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="5dp"
         android:background="@color/colorPrimaryDark"
-        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarPrescription" />
 
     <TextView
         android:id="@+id/textPres"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="5.4dp"
-        android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="Reçete Bitişi"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarPrescription" />
 
     <View
         android:id="@+id/viewPres"
         android:layout_width="2dp"
         android:layout_height="27dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="7dp"
         android:background="@color/colorPrimaryDark"
         app:layout_constraintStart_toEndOf="@id/textPres"
-        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarPrescription" />
 
     <TextView
         android:id="@+id/textPro"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="Malzemeler"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/viewPres"
-        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarPrescription" />
 
     <View
         android:id="@+id/blueBox"
         android:layout_width="49dp"
         android:layout_height="24dp"
-        android:layout_marginTop="10dp"
         android:background="@drawable/ic_unfold_more_black_48x24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchViewTCOne" />
+        app:layout_constraintTop_toBottomOf="@id/toolbarPrescription" />
 
     <View
         android:id="@+id/lastLine"
