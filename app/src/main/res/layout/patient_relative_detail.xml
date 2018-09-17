@@ -9,13 +9,13 @@
         android:id="@+id/buttonExpandRelative"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
+        android:background="@color/colorPrimaryDark"
         android:drawableRight="@android:drawable/arrow_down_float"
         android:drawableTint="@color/colorPrimaryDark"
         android:textStyle="bold"
         android:text="OĞLU AKIN KÜRŞAT ÖZKAN"
         android:paddingRight="10dp"
-        android:textColor="@color/colorPrimaryDark" />
+        android:textColor="#ffffff" />
 
     <com.github.aakira.expandablelayout.ExpandableLinearLayout
         android:id="@+id/expandableRelative"
@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
                 android:text="TC : 16192221284"
                 android:textStyle="bold"
                 android:layout_alignParentTop="true" />
@@ -53,6 +54,7 @@
                 android:gravity="center"
                 android:text="AKIN KÜRŞAT ÖZKAN"
                 android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
                 android:layout_toEndOf="@id/textViewRelativeTC"
                 android:layout_alignParentTop="true" />
 
@@ -63,6 +65,8 @@
                 android:gravity="center"
                 android:text="Tel: 05458529996"
                 android:textStyle="bold"
+                android:background="#00FF00"
+                android:textColor="#000000"
                 android:layout_below="@id/textViewRelativeTC"/>
 
             <Button
@@ -72,7 +76,9 @@
                 android:layout_marginStart="64dp"
                 android:gravity="center"
                 android:textStyle="bold"
+                android:textColor="#ffffff"
                 android:text="GPS"
+                android:background="@color/colorPrimaryDark"
                 android:layout_below="@id/textViewRelativeName"
                 android:layout_toEndOf="@id/textViewRelativePhoneNumber"/>
 
@@ -84,6 +90,7 @@
                 android:gravity="top|left"
                 android:hint="ADRES"
                 android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
                 android:lines="5"
                 android:maxLines="5"
                 android:minLines="3"

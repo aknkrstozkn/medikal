@@ -37,7 +37,7 @@
     <View
         android:id="@+id/viewPres"
         android:layout_width="2dp"
-        android:layout_height="27dp"
+        android:layout_height="26dp"
         android:layout_marginStart="20dp"
         android:background="@color/colorPrimaryDark"
         app:layout_constraintStart_toEndOf="@id/textPres"

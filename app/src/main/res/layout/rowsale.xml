@@ -15,8 +15,8 @@
             android:layout_height="match_parent"
             android:lines="2"
             android:layout_alignParentStart="true"
-            android:text="12:30
-08/12/2018"
+            android:text="00:00
+00/00/2000"
             android:textAlignment="gravity"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
@@ -36,7 +36,7 @@
             android:layout_toEndOf="@id/textViewSaleDate"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
-            android:text="AKIN KÜRŞAT ÖZKAN"
+            android:text="HASTA ADI"
             android:layout_marginStart="5dp"
             android:textStyle="bold"
             android:gravity="center"/>
@@ -55,7 +55,7 @@
             android:layout_toEndOf="@id/textViewSalePatientName"
             android:layout_alignParentEnd="true"
             android:textAlignment="center"
-            android:text="bez, sonda, falan filan"
+            android:text="ürün, ler"
             android:textStyle="bold"
             android:gravity="center"/>
 
