@@ -68,6 +68,12 @@ public class SalesList extends AppCompatActivity {
         //configureRecyclerView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
     private void configureRecyclerView() {
 
         mRecyclerView = findViewById(R.id.recyclerViewSales);
@@ -81,6 +87,7 @@ public class SalesList extends AppCompatActivity {
         } catch (NullPointerException e) {
             Toast errorToast = Toast.makeText(this, "Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_SHORT);
             errorToast.show();
+            finish();
         } catch (Exception e) {
             throw e;
         }
