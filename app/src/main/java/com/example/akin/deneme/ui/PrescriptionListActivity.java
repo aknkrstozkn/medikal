@@ -32,15 +32,26 @@ public class PrescriptionListActivity extends AppCompatActivity {
         context = this;
         db = new DataBase(this);
         sales = db.getInDatePresSales();
+        if(sales == null || sales.size() == 0){
+            Toast.makeText(context,"Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbarPrescription);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Günü Geçiş Reçeteler");
-        connfigureRecyclerView();
+        getSupportActionBar().setTitle("Geçerli Reçeteler");
+        configureRecyclerView();
 
     }
 
-    private void connfigureRecyclerView(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sales = db.getOutOfDatePresSales();
+        configureRecyclerView();
+    }
+
+    private void configureRecyclerView(){
 
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -53,6 +64,7 @@ public class PrescriptionListActivity extends AppCompatActivity {
         }catch (NullPointerException e){
             Toast errorToast = Toast.makeText(this, "Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_SHORT);
             errorToast.show();
+            finish();
         }
         catch (Exception e){
             throw e;
