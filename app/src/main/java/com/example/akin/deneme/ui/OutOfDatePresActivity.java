@@ -40,7 +40,6 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
     private SearchView searchView;
     private Context context;
     private List<Sale> sales;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,32 +47,41 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
 
         Toolbar toolbar = findViewById(R.id.toolbarPrescription);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Günü Geçiş Reçeteler");
+        getSupportActionBar().setTitle("Günü Geçmiş Reçeteler");
 
         context = this;
 
         db = new DataBase(this);
         sales = db.getOutOfDatePresSales();
-
+        if(sales == null || sales.size() == 0){
+            Toast.makeText(context,"Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_LONG).show();
+            finish();
+        }
         configureRecyclerView();
 
+    }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sales = db.getOutOfDatePresSales();
+        configureRecyclerView();
     }
 
     private void configureRecyclerView(){
 
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         try {
-            mAdapter = new MyAdapter(sales, context);
+            mAdapter = new MyAdapter<>(sales, context);
             mRecyclerView.setAdapter(mAdapter);
         } catch (NullPointerException e) {
-            Toast errorToast = Toast.makeText(this, "Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_SHORT);
+            Toast errorToast = Toast.makeText(context, "Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_SHORT);
             errorToast.show();
+            finish();
         } catch (Exception e) {
             throw e;
         }
