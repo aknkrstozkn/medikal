@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Deneme</string>
+    <string name="app_name">Reçete-Takip</string>
     <string name="title_activity_patient_detail">PatientDetailActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
 </resources>
