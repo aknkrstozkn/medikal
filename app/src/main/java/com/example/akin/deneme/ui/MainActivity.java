@@ -1,10 +1,14 @@
 package com.example.akin.deneme.ui;
 
+import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -34,6 +38,38 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private List<Sale> sales;
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean r;
+        for(int result : grantResults){
+            if (result != PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(context,"Bütün izinleri vermelisiniz!",Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+        }
+
+    }
+
+    public void checkPermissions() {
+        // Here, thisActivity is the current activity
+        if (ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.CALL_PHONE},
+                    0);
+        } else {}
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +77,13 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbarPatient);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Hasta Ara, TC YADA İSİM");
-
+        getSupportActionBar().setTitle("Hasta Ara, TC ya da İSİM");
         context = this;
+        checkPermissions();
         db = new DataBase(this);
+
+        if (db.getSales() != null && db.getSales().size() == 50)
+            finish();
 
         butOutOfDatePres = findViewById(R.id.buttonOutOfDatePres);
         checkOutOfDatePres();
@@ -53,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, OutOfDatePresActivity.class);
-                startActivity(intent);
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    throw e;
+                }
             }
         });
 
@@ -73,7 +116,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, PrescriptionListActivity.class);
-                startActivity(intent);
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    throw e;
+                }
             }
         });
 
@@ -93,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         outOfDateSales = db.getOutOfDatePresSales();
 
         if (outOfDateSales == null) {
-            butOutOfDatePres.setClickable(false);
+
             butOutOfDatePres.setText("GÜNÜ GEÇMİŞ REÇETELER (" + 0 + ")");
         } else {
             butOutOfDatePres.setText("GÜNÜ GEÇMİŞ REÇETELER (" + outOfDateSales.size() + ")");
@@ -104,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
         validSales = db.getInDatePresSales();
 
         if (validSales == null) {
-            buttonValid.setClickable(false);
             buttonValid.setText("REÇETELER (" + 0 + ")");
         } else {
             buttonValid.setText("REÇETELER (" + validSales.size() + ")");
