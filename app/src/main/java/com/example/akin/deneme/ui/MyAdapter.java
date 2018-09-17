@@ -1,9 +1,17 @@
 package com.example.akin.deneme.ui;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.renderscript.Sampler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -13,11 +21,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.akin.deneme.R;
+import com.example.akin.deneme.core.DataBase;
 import com.example.akin.deneme.core.model.Patient;
 import com.example.akin.deneme.core.model.ProductAmount;
 import com.example.akin.deneme.core.model.Relativity;
@@ -33,6 +43,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
     private final int TYPE_PRESCRIPTION = 1;
@@ -46,11 +57,13 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private List<Patient> patientsFiltered = new ArrayList<>();
     private SparseBooleanArray expandState;
     private List<Relativity> relativities = new ArrayList<>();
+    private DataBase db;
 
 
     public MyAdapter(List<T> items, Context context) {
 
         this.context = context;
+        db = new DataBase(context);
         expandState = new SparseBooleanArray();
         if (!items.isEmpty()) {
 
@@ -58,7 +71,7 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 this.sales = (List<Sale>) items;
                 salesFiltered = (List<Sale>) items;
-                for (int i = 0; i < sales.size(); i++) expandState.append(i, false);
+                for (int i = 0; i < salesFiltered.size(); i++) expandState.append(i, false);
             } else if (items.get(0) instanceof Patient) {
 
                 this.patients = (List<Patient>) items;
@@ -66,6 +79,7 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 for (int i = 0; i < patients.size(); i++) expandState.append(i, false);
             }
         }
+
     }
 
     public MyAdapter(Patient patient, Context context) {
@@ -171,7 +185,7 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (holder.getItemViewType()) {
             case TYPE_PRESCRIPTION:
                 final ViewHolderPrescriptions viewHolderPrescriptions = (ViewHolderPrescriptions) holder;
-                Sale item = salesFiltered.get(position);
+                final Sale item = salesFiltered.get(position);
 
                 viewHolderPrescriptions.setIsRecyclable(false);
                 //gets, converts and adds the prescription's end-date to a TextView
@@ -183,11 +197,13 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 //gets and adds the prescription products and their amounts to a TextView.
                 TextView textViewProductAmount = viewHolderPrescriptions.textProductAmount;
                 String text = "";
-                for (ProductAmount productAmount : item.getPrescription().getPrescriptionsProductList()) {
-                    text += productAmount.getProductAmount() + " tane " + productAmount.getProduct().getType() + " ";
+                List<ProductAmount> productAmounts = item.getPrescription().getPrescriptionsProductList();
+                if(productAmounts != null) {
+                    for (ProductAmount productAmount : productAmounts) {
+                        text += productAmount.getProductAmount() + " tane " + productAmount.getProduct().getType() + " ";
+                    }
+                    textViewProductAmount.setText(text);
                 }
-                textViewProductAmount.setText(text);
-
                 viewHolderPrescriptions.expandableLinearLayout.setInRecyclerView(true);
 
                 //gets, converts and adds the prescription's start-date to a TextView
@@ -236,13 +252,36 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     @Override
                     public void onClick(final View v) {
                         onClickButton(viewHolderPrescriptions.expandableLinearLayout);
+
                     }
                 });
+
+                RelativeLayout buttonPresSale = viewHolderPrescriptions.expandableLinearLayout.findViewById(R.id.buttonSale);
+                buttonPresSale.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, SaleDetailActivity.class);
+                        intent.putExtra("salePrescriptionId",item.getPrescription().getId());
+                        context.startActivity(intent);
+                    }
+                });
+
+                RelativeLayout buttonPresPatient = viewHolderPrescriptions.
+                        expandableLinearLayout.findViewById(R.id.buttonPatient);
+                buttonPresPatient.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, PatientDetailActivity.class);
+                        intent.putExtra("tc",item.getPatient().getTc());
+                        context.startActivity(intent);
+                    }
+                });
+
                 break;
             case TYPE_RELATIVE:
 
                 final ViewHolderRelativities viewHolderRelativities = (ViewHolderRelativities) holder;
-                Relativity relativity = relativities.get(position);
+                final Relativity relativity = relativities.get(position);
 
                 viewHolderRelativities.setIsRecyclable(false);
 
@@ -259,9 +298,42 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 TextView textViewRelativePhoneNumber = viewHolderRelativities.expandableLinearLayout.findViewById(R.id.textViewRelativePhoneNumber);
                 textViewRelativePhoneNumber.setText("Tel: " + relativity.getRelative().getPhoneNumber());
+                textViewRelativePhoneNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String number = relativity.getRelative().getPhoneNumber();
+                        if (number.isEmpty())
+                            return;
+                        String uri = "tel:0" + number;
+                        Intent intent = new Intent(Intent.ACTION_CALL);
+                        try {
+                            intent.setData(Uri.parse(uri));
+                        }catch (Exception e){
+                            return;
+                        }
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        context.startActivity(intent);
+                    }
+                });
 
                 TextView textViewRelativeAddress = viewHolderRelativities.expandableLinearLayout.findViewById(R.id.textViewRelativeAddress);
                 textViewRelativeAddress.setText(relativity.getRelative().getAddress());
+
+                Button buttonRelativeGPS = viewHolderRelativities.expandableLinearLayout.findViewById(R.id.buttonRelativeGPS);
+                final Uri gmmIntentUri = Uri.parse("google.navigation:q=" + relativity.getRelative().getCordinate());
+                buttonRelativeGPS.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        Intent i = Intent.createChooser(mapIntent, "choose");
+                        context.startActivity(i);
+                    }
+                });
+
+                if(relativity.getRelative().getCordinate() == null)
+                    buttonRelativeGPS.setVisibility(View.INVISIBLE);
 
                 viewHolderRelativities.expandableLinearLayout.setExpanded(expandState.get(position));
                 viewHolderRelativities.expandableLinearLayout.setListener(new ExpandableLayoutListenerAdapter() {
@@ -296,10 +368,13 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         onClickButton(viewHolderRelativities.expandableLinearLayout);
                     }
                 });
+
+
+
                 break;
             case TYPE_SALE:
                 final ViewHolderSales viewHolderSales = (ViewHolderSales) holder;
-                Sale sale = salesFiltered.get(position);
+                final Sale sale = salesFiltered.get(position);
 
                 RelativeLayout buttonSale = viewHolderSales.button;
 
@@ -319,24 +394,98 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 TextView textProductTypes = buttonSale.findViewById(R.id.textViewProductTypes);
                 String productTypes = "";
-                for (ProductAmount productAmount : sale.getPrescription().getPrescriptionsProductList()) {
-                    productTypes += productAmount.getProduct().getType() + " ";
+                List<ProductAmount> productAmountss = sale.getPrescription().getPrescriptionsProductList();
+                if(productAmountss != null) {
+                    for (ProductAmount productAmount :productAmountss) {
+                        productTypes += productAmount.getProduct().getType() + " ";
+                    }
+                    textProductTypes.setText(productTypes);
                 }
-                textProductTypes.setText(productTypes);
 
-                buttonSale.setOnClickListener(new View.OnClickListener() {
+                textSalePatientName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast toast = Toast.makeText(context, "TIKLAMA!", Toast.LENGTH_SHORT);
-                        toast.show();
-
+                        Intent intent = new Intent(context, PatientDetailActivity.class);
+                        intent.putExtra("tc",sale.getPatient().getTc());
+                        context.startActivity(intent);
                     }
                 });
+
+                textProductTypes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, SaleDetailActivity.class);
+                        intent.putExtra("salePrescriptionId" +
+                                "",sale.getPrescription().getId());
+                        context.startActivity(intent);
+                    }
+                });
+
+                textProductTypes.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+                        deleteSaleItem(sale, viewHolderSales);
+                        return false;
+                    }
+                });
+
+                textSalePatientName.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+                        deleteSaleItem(sale, viewHolderSales);
+                        return false;
+                    }
+                });
+
+                buttonSale.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+                        deleteSaleItem(sale, viewHolderSales);
+                        return false;
+                    }
+                });
+
                 break;
-
-
         }
+    }
 
+    public void deleteSaleItem(final Sale sale, final ViewHolderSales viewHolderSales){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Dikkat!");
+        builder.setMessage("Bu satış silinecektir!");
+        builder.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        builder.setPositiveButton("Sil", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                //first of all we should delete sale from database
+                db.deleteSale(sale.getPrescription().getId());
+                //we need a new list to compare old one
+                List<Sale> sales = new ArrayList<>();
+                sales.addAll(salesFiltered);
+                //we cant use positon parameter here because he is not updating itself with list
+                //so we need to use viewHolderSales.getAdapterPosition()
+                sales.remove(viewHolderSales.getAdapterPosition());
+                //updating recyclerview with DiffUtil.Callback because this is faster than notifyDataSetChanged() method
+                updateSaleListItems(sales);
+            }
+        });
+
+        builder.show();
+    }
+
+    public void updateSaleListItems(List<Sale> sales) {
+        final SaleDiffCallBack diffCallback = new SaleDiffCallBack(this.salesFiltered, sales);
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+
+        this.salesFiltered.clear();
+        this.salesFiltered.addAll(sales);
+        diffResult.dispatchUpdatesTo(this);
 
     }
 
@@ -362,7 +511,6 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if(relativities != null)
                 return relativities.size();
         }
-        Log.i("AMK DUSMEDI!!!", "DUSMEDI!!!!!!");
         return 0;
     }
 
