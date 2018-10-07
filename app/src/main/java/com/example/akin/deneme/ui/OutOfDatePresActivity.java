@@ -40,6 +40,13 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
     private SearchView searchView;
     private Context context;
     private List<Sale> sales;
+
+    public boolean checkSales(List<Sale> sales){
+        if(sales == null || sales.size() == 0)
+            return false;
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +57,15 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
         getSupportActionBar().setTitle("Günü Geçmiş Reçeteler");
 
         context = this;
-
         db = new DataBase(this);
         sales = db.getOutOfDatePresSales();
-        if(sales == null || sales.size() == 0){
-            Toast.makeText(context,"Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_LONG).show();
+
+        if(!checkSales(sales)){
+            Toast.makeText(context,
+                    "Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_LONG).show();
             finish();
         }
+
         configureRecyclerView();
 
     }
@@ -68,6 +77,7 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
         configureRecyclerView();
     }
 
+    //filling RecyclerView with items
     private void configureRecyclerView(){
 
         mRecyclerView = findViewById(R.id.recyclerView);
@@ -78,15 +88,15 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
         try {
             mAdapter = new MyAdapter<>(sales, context);
             mRecyclerView.setAdapter(mAdapter);
-        } catch (NullPointerException e) {
-            Toast errorToast = Toast.makeText(context, "Herhangi bir reçete satışı bulunmamaktadır", Toast.LENGTH_SHORT);
-            errorToast.show();
-            finish();
         } catch (Exception e) {
+            Toast.makeText(context,
+                    "Reçeteler Yüklenemedi! Hata:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+            finish();
             throw e;
         }
     }
 
+    //serachViews OptionsMenu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -95,11 +105,6 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
         searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
-        /**  searchView.setActivated(true);
-         searchView.setQueryHint("Isim");
-         searchView.onActionViewExpanded();
-         searchView.setIconified(false);
-         searchView.clearFocus(); **/
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -116,21 +121,4 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
         });
         return true;
     }
-/**
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_search) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSelected(String item) {
-        Toast.makeText(this, "Selected: " + item, Toast.LENGTH_LONG).show();
-    }
-    **/
 }

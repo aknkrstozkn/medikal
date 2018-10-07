@@ -8,6 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableContainer;
 import android.net.Uri;
 import android.renderscript.Sampler;
 import android.support.v4.app.ActivityCompat;
@@ -29,6 +33,7 @@ import android.widget.Toast;
 import com.example.akin.deneme.R;
 import com.example.akin.deneme.core.DataBase;
 import com.example.akin.deneme.core.model.Patient;
+import com.example.akin.deneme.core.model.Prescription;
 import com.example.akin.deneme.core.model.ProductAmount;
 import com.example.akin.deneme.core.model.Relativity;
 import com.example.akin.deneme.core.model.Sale;
@@ -44,6 +49,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import javax.xml.transform.dom.DOMLocator;
 
 public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
     private final int TYPE_PRESCRIPTION = 1;
@@ -277,6 +284,29 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     }
                 });
 
+                final View view = viewHolderPrescriptions.itemView;
+                view.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle("Dikkat!");
+                        builder.setMessage("Bu reçete Geçersiz Sayılacak");
+                        builder.setNegativeButton("İptal", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                        builder.setPositiveButton("Tamam", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Prescription prescription = item.getPrescription();
+                                prescription.setValidity(0);
+                                db.updatePrescription(prescription);
+                            }
+                        });
+                        builder.show();
+                        return false;
+                    }
+                });
+
                 break;
             case TYPE_RELATIVE:
 
@@ -376,7 +406,7 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 final ViewHolderSales viewHolderSales = (ViewHolderSales) holder;
                 final Sale sale = salesFiltered.get(position);
 
-                RelativeLayout buttonSale = viewHolderSales.button;
+                final RelativeLayout buttonSale = viewHolderSales.button;
 
                 TextView textSaleDate = buttonSale.findViewById(R.id.textViewSaleDate);
                 Date saleDate = new Date(sale.getDate());
@@ -389,10 +419,10 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 textSaleDate.setText(hour + ":" + minute + "\n" +
                         date);
 
-                TextView textSalePatientName = buttonSale.findViewById(R.id.textViewSalePatientName);
+                final TextView textSalePatientName = buttonSale.findViewById(R.id.textViewSalePatientName);
                 textSalePatientName.setText(sale.getPatient().getName());
 
-                TextView textProductTypes = buttonSale.findViewById(R.id.textViewProductTypes);
+                final TextView textProductTypes = buttonSale.findViewById(R.id.textViewProductTypes);
                 String productTypes = "";
                 List<ProductAmount> productAmountss = sale.getPrescription().getPrescriptionsProductList();
                 if(productAmountss != null) {
@@ -424,7 +454,6 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 textProductTypes.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-
                         deleteSaleItem(sale, viewHolderSales);
                         return false;
                     }
@@ -433,7 +462,6 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 textSalePatientName.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-
                         deleteSaleItem(sale, viewHolderSales);
                         return false;
                     }
@@ -442,7 +470,6 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 buttonSale.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-
                         deleteSaleItem(sale, viewHolderSales);
                         return false;
                     }
@@ -453,6 +480,7 @@ public class MyAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void deleteSaleItem(final Sale sale, final ViewHolderSales viewHolderSales){
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Dikkat!");
         builder.setMessage("Bu satış silinecektir!");

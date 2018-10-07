@@ -104,6 +104,14 @@ public class AddSaleActivity extends AppCompatActivity {
         eLayoutRelative = findViewById(R.id.eLayoutRelative);
     }
 
+    //Collecting todays date data
+    private void castCalendar(){
+        caledar = Calendar.getInstance();
+        year = caledar.get(Calendar.YEAR);
+        mounth = caledar.get(Calendar.MONTH);
+        day = caledar.get(Calendar.DAY_OF_MONTH);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,16 +119,18 @@ public class AddSaleActivity extends AppCompatActivity {
 
         productAmounts = new ArrayList<>();
 
-
-        caledar = Calendar.getInstance();
-        year = caledar.get(Calendar.YEAR);
-        mounth = caledar.get(Calendar.MONTH);
-        day = caledar.get(Calendar.DAY_OF_MONTH);
+        castCalendar();
 
         db = new DataBase(this);
+        try{
+            locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+        }catch (Exception e){
+            Toast.makeText(context,"Konum alma servisine ulaşılamıyor!",Toast.LENGTH_LONG).show();
+            checkRelativeCordinate.setVisibility(View.GONE);
+            checkPatientCordinate.setVisibility(View.GONE);
+        }
 
-        locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
 
         initializeView();
         /**
@@ -142,18 +152,19 @@ public class AddSaleActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (checkPatientCordinate.isChecked()) {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+
+                        ActivityCompat.requestPermissions(AddSaleActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
                         return;
                     }
-                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                         buildAlertMessageNoGps();
+                        return;
+                    }
 
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if (location == null)
@@ -164,12 +175,14 @@ public class AddSaleActivity extends AppCompatActivity {
                     try {
                         patientCordinate = location.getLatitude() + "," + location.getLongitude();
                     } catch (NullPointerException e) {
-                        Toast.makeText(context, "Konum alınamadı!... \n Konumunuz Kapalı yada Telefonunuz çekmiyor olabilir.",
-                                Toast.LENGTH_LONG);
+                        Toast.makeText(context, "Konum alınamadı!... " +
+                                        "\n Konumunuz Kapalı yada Telefonunuz çekmiyor olabilir.",
+                                Toast.LENGTH_LONG).show();
                         checkPatientCordinate.setChecked(false);
                     } catch (Exception e) {
-                        Toast.makeText(context, "Konum alınamadı!... \n Konumunuz Kapalı yada Telefonunuz çekmiyor olabilir.",
-                                Toast.LENGTH_LONG);
+                        Toast.makeText(context, "Yeni Konum alınamadı!... " +
+                                        "\n Alınan konum hatalı ,Konumunuz Kapalı ya da Telefonunuz çekmiyor olabilir.",
+                                Toast.LENGTH_LONG).show();
                         checkPatientCordinate.setChecked(false);
                     }
 
@@ -183,21 +196,18 @@ public class AddSaleActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //
-                        //                int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+
                         ActivityCompat.requestPermissions(AddSaleActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
                         return;
                     }
-                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                         buildAlertMessageNoGps();
-
+                        return;
+                    }
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if (location == null)
                         location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -206,12 +216,16 @@ public class AddSaleActivity extends AppCompatActivity {
                     try {
                         relativeCordinate = location.getLatitude() + "," + location.getLongitude();
                     } catch (NullPointerException e) {
-                        Toast.makeText(context, "Konum alınamadı!... \n Konumunuz Kapalı yada Telefonunuz çekmiyor olabilir.",
-                                Toast.LENGTH_LONG);
+
+                        Toast.makeText(context, "Konum alınamadı!... " +
+                                        "\n Konumunuz Kapalı ya da Telefonunuz çekmiyor olabilir.",
+                                Toast.LENGTH_LONG).show();
                         checkRelativeCordinate.setChecked(false);
                     } catch (Exception e) {
-                        Toast.makeText(context, "Konum alınamadı!... \n Konumunuz Kapalı yada Telefonunuz çekmiyor olabilir.",
-                                Toast.LENGTH_LONG);
+
+                        Toast.makeText(context, "Yeni Konum alınamadı!... " +
+                                        "\n Alınan konum hatalı ,Konumunuz Kapalı ya da Telefonunuz çekmiyor olabilir.",
+                                Toast.LENGTH_LONG).show();
                         checkRelativeCordinate.setChecked(false);
                     }
                 }
@@ -250,15 +264,9 @@ public class AddSaleActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() == 11) {
-                    Toast toast;
-                    switch (putRelative()) {
-
-
-                        case 0:
-                            toast = Toast.makeText(context, "Bilgiler Yüklendi", Toast.LENGTH_SHORT);
-                            toast.show();
-                            break;
-                    }
+                    if(putRelative())
+                        Toast.makeText(context,
+                                "Bilgiler Yüklendi", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -445,56 +453,31 @@ public class AddSaleActivity extends AppCompatActivity {
         buttonMakeSale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPatientRelative.isChecked()) {
-
-                    if (controlPatient() || controlPrescription() || editPatientTC.getError() != null
-                            || editPatientPhoneNumber.getError() != null) {
-                        Toast toast = Toast.makeText(context, "Lütfen bilgilerin hepsini (doğru) doldurun!", Toast.LENGTH_LONG);
-                        toast.show();
-                        return;
-                    } else if (listProductAmount.getChildCount() == 0) {
-                        Toast toast = Toast.makeText(context, "Lütfen listeye ürün ekleyin!", Toast.LENGTH_LONG);
-                        toast.show();
+                relativities = new ArrayList<>();
+                if (!checkPatientRelative.isChecked()) {
+                    if(controlRelative()) {
+                        Toast.makeText(context,
+                                "Lütfen bilgilerin hepsini (doğru) doldurun!", Toast.LENGTH_LONG).show();
                         return;
                     }
-
-
-                    relativities = new ArrayList<>();
-                    patient = getPatient(relativities);
-                    product = getProduct();
-                    prescription = getPrescription(productAmounts);
-
-                    sale = getSale(prescription, patient);
-
-
-                } else {
-
-                    if (controlPatient() || controlPrescription() || controlRelative()
-                            || editRelativeTC.getError() != null
-                            || editPatientTC.getError() != null
-                            || editPatientPhoneNumber.getError() != null
-                            || editRelativePhoneNumber.getError() != null) {
-
-                        Toast toast = Toast.makeText(context, "Lütfen bilgilerin hepsini (doğru) doldurun!", Toast.LENGTH_LONG);
-                        toast.show();
-                        return;
-                    } else if (listProductAmount.getChildCount() == 0) {
-                        Toast toast = Toast.makeText(context, "Lütfen listeye ürün ekleyin!", Toast.LENGTH_LONG);
-                        toast.show();
-                        return;
-                    }
-
                     relative = getRelative();
                     relativities = getRelativities(relative);
-                    patient = getPatient(relativities);
-                    product = getProduct();
-                    prescription = getPrescription(productAmounts);
-                    sale = getSale(prescription, patient, relative);
+
                 }
-
-                if (sale.getPrescription().geteDate() < sale.getPrescription().getsDate())
-                    Toast.makeText(context, "Lütfen listeye ürün ekleyin!", Toast.LENGTH_LONG);
-
+                if (controlPatient() || controlPrescription() || editPatientTC.getError() != null
+                        || editPatientPhoneNumber.getError() != null) {
+                    Toast toast = Toast.makeText(context, "Lütfen bilgilerin hepsini (doğru) doldurun!", Toast.LENGTH_LONG);
+                    toast.show();
+                    return;
+                } else if (listProductAmount.getChildCount() == 0) {
+                    Toast toast = Toast.makeText(context, "Lütfen listeye ürün ekleyin!", Toast.LENGTH_LONG);
+                    toast.show();
+                    return;
+                }
+                patient = getPatient(relativities);
+                product = getProduct();
+                prescription = getPrescription(productAmounts);
+                sale = getSale(prescription, patient);
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("Dikkat!");
@@ -550,35 +533,30 @@ public class AddSaleActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * return -1 mean is , there is no patient.
-     * return -2 mean is , there is no relative or patient has no relative
-     * return -3 mean is , the relative is not belongs to patient
-     * return  0 mean is , there is no error.
-     **/
-    private int putRelative() {
+
+    private boolean putRelative() {
         patient = db.getPatient(editPatientTC.getText().toString());
         String tc = editRelativeTC.getText().toString();
         String relativity = "";
         if (patient == null)
-            return -1;
+            return false;
         relative = db.getRelative(tc);
         relativities = db.getRelativities(patient.getTc());
         if (relativities == null || relative == null)
-            return -2;
+            return false;
 
         for (Relativity relativity1 : relativities) {
             if (relativity1.getRelative().getTc().equals(relative.getTc()))
                 relativity = relativity1.getRelativity();
         }
         if (relativity.isEmpty())
-            return -3;
+            return false;
 
         editRelativeName.setText(relative.getName());
         editRelativeAddress.setText(relative.getAddress());
         editRelativePhoneNumber.setText(relative.getPhoneNumber());
         editRelativity.setText(relativity);
-        return 0;
+        return true;
     }
 
     public boolean controlPatient() {
@@ -748,6 +726,8 @@ public class AddSaleActivity extends AppCompatActivity {
     private Sale getSale(Prescription prescription, Patient patient, Relative relative) {
 
         Sale sale = new Sale();
+
+        castCalendar();
 
         sale.setDate(caledar.getTimeInMillis());
         sale.setPrescription(prescription);
