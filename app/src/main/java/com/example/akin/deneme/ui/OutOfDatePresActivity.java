@@ -42,9 +42,7 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
     private List<Sale> sales;
 
     public boolean checkSales(List<Sale> sales){
-        if(sales == null || sales.size() == 0)
-            return false;
-        return true;
+        return sales != null && sales.size() != 0;
     }
 
     @Override
@@ -85,15 +83,19 @@ public class OutOfDatePresActivity extends AppCompatActivity /** implements MyAd
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        try {
-            mAdapter = new MyAdapter<>(sales, context);
-            mRecyclerView.setAdapter(mAdapter);
-        } catch (Exception e) {
-            Toast.makeText(context,
-                    "Reçeteler Yüklenemedi! Hata:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
-            finish();
-            throw e;
+        if(checkSales(sales))
+        {
+            try {
+                mAdapter = new MyAdapter<>(sales, context);
+                mRecyclerView.setAdapter(mAdapter);
+            } catch (Exception e) {
+                Toast.makeText(context,
+                        "Reçeteler Yüklenemedi! Hata:\n" + e.getMessage(), Toast.LENGTH_LONG).show();
+                finish();
+                throw e;
+            }
         }
+
     }
 
     //serachViews OptionsMenu
