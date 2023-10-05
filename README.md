@@ -7,7 +7,7 @@ Medikal aims to streamline the management of medical product sales and patient d
 ### Technology Stack:
 - **SQLite Database**: Designed adhering to the 3NF (Third Normal Form).
 - **Barcode and QR-Code Scanning**: Utilizes the mobile camera for registering patient information.
-- **Custom Database Converter**: Facilitates conversion between data models and data rows.
+- **Custom ORM(Object Relational Mapping) System**: Facilitates conversion between data models and data rows.
 
 ### Objectives:
 - Provide a systematic approach to track and manage medical product sales.
